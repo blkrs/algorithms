@@ -14,12 +14,13 @@ public class GradientDescent implements LinearRegressionSolver {
     int endTrainingSet;
     int startControlSet;
     int endControlSet;
+    int y_index;
     List<Point> dataPoints;
     List<Double> theta;
 
     public void solve(CsvData data) {
         dataPoints = data.getPoints();
-        featureScaling(data.getPoints());
+        featureScaling();
         data.shuffle();
 
         Integer height = data.getPoints().size();
@@ -29,6 +30,7 @@ public class GradientDescent implements LinearRegressionSolver {
         endTrainingSet = (int)( (height - 1) * (1.0-CONTROL_TEST_FACTOR));
         startControlSet = endTrainingSet + 1;
         endControlSet = height - 1;
+        y_index = width - 1;
 
         System.out.println("Height = " + height + " " + width);
         System.out.println("End training set: " + endTrainingSet);
@@ -44,12 +46,27 @@ public class GradientDescent implements LinearRegressionSolver {
             theta.add(0.0);
         }
         Double cost = 0.0;
-        do {
+        //do {
             cost = computeCost();
-            System.out.println("Cost function = " + cost);
-            adjustTheta();
-        } while (cost > COST_FUNCTION_THRESHOLD);
+            System.out.println("XXXXXXXXXXXXXX Cost function = " + cost);
+         //   adjustTheta();
+        //} while (false); //cost > COST_FUNCTION_THRESHOLD);
+    }
 
+    private Double computeCost() {
+        Double totalCost = 0.0;
+        for (int j = 0; j < endTrainingSet; ++j) {
+            totalCost += Math.pow(multiply(dataPoints.get(j), theta) - dataPoints.get(j).getVector().get(y_index),2)/endTrainingSet;
+        }
+        return totalCost/2;
+    }
+
+    private Double multiply(Point p, List<Double> theta) {
+        Double t = 0.0;
+        for (int i =0; i < theta.size(); ++i) {
+            t+= theta.get(i) * p.getVector().get(i);
+        }
+        return t;
     }
 
     public void featureScaling() {
