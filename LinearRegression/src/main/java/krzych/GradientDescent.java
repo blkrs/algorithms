@@ -8,7 +8,8 @@ import java.util.List;
  */
 public class GradientDescent implements LinearRegressionSolver {
 
-    public static final double COST_FUNCTION_THRESHOLD = 20.0;
+    public static final double COST_FUNCTION_THRESHOLD = 0.00001;
+    private static final Double ALPHA = 0.001;
     final double CONTROL_TEST_FACTOR = 0.1;
     int startTrainingSet;
     int endTrainingSet;
@@ -36,29 +37,57 @@ public class GradientDescent implements LinearRegressionSolver {
         System.out.println("End training set: " + endTrainingSet);
         featureScaling();
         gradientDescent();
+        validate();
+        printTheta();
 
+    }
+
+    private void printTheta() {
+        for (int i =0; i < theta.size(); ++i) {
+            System.out.print("theta" + i + " = "  +theta.get(i) + " ,");
+        }
+        System.out.println();
+    }
+
+    private void validate() {
+        for (int j = startControlSet; j < endControlSet; ++j) {
+            Double diff= multiply(dataPoints.get(j), theta) - dataPoints.get(j).getVector().get(y_index);
+            System.out.println(" Get: " + multiply(dataPoints.get(j), theta) +" expected: "
+                    + dataPoints.get(j).getVector().get(y_index)
+                    + " error: " + diff);
+        }
     }
 
     private void gradientDescent() {
         int features = dataPoints.get(0).getVector().size() - 1;
         theta = new ArrayList<Double>();
         for (int i = 0;i <= features;++i) {
-            theta.add(0.0);
+            theta.add(20.0);
         }
         Double cost = 0.0;
-        //do {
-            cost = computeCost();
+        do {
+            cost = htheta();
             System.out.println("XXXXXXXXXXXXXX Cost function = " + cost);
-         //   adjustTheta();
-        //} while (false); //cost > COST_FUNCTION_THRESHOLD);
+            adjustTheta();
+        } while (cost > COST_FUNCTION_THRESHOLD);
     }
 
-    private Double computeCost() {
+    private Double htheta() {
         Double totalCost = 0.0;
         for (int j = 0; j < endTrainingSet; ++j) {
             totalCost += Math.pow(multiply(dataPoints.get(j), theta) - dataPoints.get(j).getVector().get(y_index),2)/endTrainingSet;
         }
         return totalCost/2;
+    }
+
+    private void adjustTheta() {
+        for (int i =0; i < theta.size(); ++i) {
+            Double temp = 0.0;
+            for (int j = 0; j < endTrainingSet; ++j) {
+                temp += (multiply(dataPoints.get(j), theta) - dataPoints.get(j).getVector().get(y_index)) * dataPoints.get(j).getVector().get(i) / endTrainingSet;
+            }
+            theta.set(i, theta.get(i) - ALPHA * temp);
+        }
     }
 
     private Double multiply(Point p, List<Double> theta) {

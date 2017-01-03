@@ -39,7 +39,6 @@ public class AppTest
         data.shuffle();
         data.printX();
         new GradientDescent().solve(data);
-        data.print();
     }
 
 }
