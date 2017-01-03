@@ -38,7 +38,13 @@ public class AppTest
         CsvData data = CsvData.readFile("src/test/resources/iris.csv");
         data.shuffle();
         data.printX();
-        new GradientDescent().solve(data);
+        new GradientDescent().solve(data, 0.1, 0.0001);
+
+
+        CsvData linearData = CsvData.readFile("src/test/resources/linear.csv");
+        linearData.shuffle();
+        linearData.printX();
+        new GradientDescent().solve(linearData);
     }
 
 }

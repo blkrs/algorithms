@@ -8,9 +8,9 @@ import java.util.List;
  */
 public class GradientDescent implements LinearRegressionSolver {
 
-    public static final double COST_FUNCTION_THRESHOLD = 0.00001;
-    private static final Double ALPHA = 0.001;
-    final double CONTROL_TEST_FACTOR = 0.1;
+    public double costFunctionThreshold = 0.000000001;
+    private Double alpha = 0.1;
+    final double CONTROL_TEST_FACTOR = 0.2;
     int startTrainingSet;
     int endTrainingSet;
     int startControlSet;
@@ -18,6 +18,12 @@ public class GradientDescent implements LinearRegressionSolver {
     int y_index;
     List<Point> dataPoints;
     List<Double> theta;
+
+    public void solve(CsvData data, Double alpha, Double costFunctionThreshold) {
+        this.alpha = alpha;
+        this.costFunctionThreshold = costFunctionThreshold;
+        solve(data);
+    }
 
     public void solve(CsvData data) {
         dataPoints = data.getPoints();
@@ -39,7 +45,6 @@ public class GradientDescent implements LinearRegressionSolver {
         gradientDescent();
         validate();
         printTheta();
-
     }
 
     private void printTheta() {
@@ -69,7 +74,7 @@ public class GradientDescent implements LinearRegressionSolver {
             cost = htheta();
             System.out.println("XXXXXXXXXXXXXX Cost function = " + cost);
             adjustTheta();
-        } while (cost > COST_FUNCTION_THRESHOLD);
+        } while (cost > costFunctionThreshold);
     }
 
     private Double htheta() {
@@ -86,7 +91,7 @@ public class GradientDescent implements LinearRegressionSolver {
             for (int j = 0; j < endTrainingSet; ++j) {
                 temp += (multiply(dataPoints.get(j), theta) - dataPoints.get(j).getVector().get(y_index)) * dataPoints.get(j).getVector().get(i) / endTrainingSet;
             }
-            theta.set(i, theta.get(i) - ALPHA * temp);
+            theta.set(i, theta.get(i) - alpha * temp);
         }
     }
 
