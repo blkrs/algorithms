@@ -14,7 +14,7 @@ public class GradientDescent implements LinearRegressionSolver {
     private int endTrainingSet;
     private int startControlSet;
     private int endControlSet;
-    private int  y_index;
+    private int y_index;
     private List<Point> dataPoints;
     private Model theta;
     private DatasetNormalizer datasetNormalizer;
@@ -74,7 +74,7 @@ public class GradientDescent implements LinearRegressionSolver {
             Double diff= computedY - originalY;
             Double error = Math.abs (diff/ yValueRange);
             if (error > maxError) maxError = error;
-            System.out.println(" Get: " + descaledComputedY +" expected: "
+            System.out.println(" get: " + descaledComputedY +" expected: "
                     + descaledOriginalY
                     + " error: " + error);
         }
@@ -94,6 +94,7 @@ public class GradientDescent implements LinearRegressionSolver {
             adjustTheta();
         } while (cost > costFunctionThreshold);
         printTheta();
+        theta.setNormalizer(datasetNormalizer);
         return theta;
     }
 

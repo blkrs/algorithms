@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Unit test for simple App.
@@ -32,18 +33,15 @@ public class AppTest
         return allTests;
     }
 
-    /**
-     * Rigourous Test :-)
-     */
     public void testGradientDescentIris() throws IOException {
         System.out.println("Iris dataset");
         CsvData data = CsvData.readFile("src/test/resources/iris.csv");
         data.shuffle();
         data.printX();
         GradientDescent gd = new GradientDescent();
-        Model linearModel = gd.solve(data, 0.1, 0.0001);
-        Double errorCS = gd.validateControlSet(linearModel);
-        Double errorTS = gd.validateTrainigSet(linearModel);
+        Model model = gd.solve(data, 0.1, 0.0001);
+        Double errorCS = gd.validateControlSet(model);
+        Double errorTS = gd.validateTrainigSet(model);
         System.out.println("Error CS = " + errorCS);
         System.out.println("Error TS = " + errorTS);
     }
@@ -54,9 +52,9 @@ public class AppTest
         linearData.shuffle();
         linearData.printX();
         GradientDescent gd = new GradientDescent();
-        Model linearModel = gd.solve(linearData);
-        Double errorCS = gd.validateControlSet(linearModel);
-        Double errorTS = gd.validateTrainigSet(linearModel);
+        Model model = gd.solve(linearData);
+        Double errorCS = gd.validateControlSet(model);
+        Double errorTS = gd.validateTrainigSet(model);
         System.out.println("Error CS = " + errorCS);
         System.out.println("Error TS = " + errorTS);
 
@@ -68,11 +66,18 @@ public class AppTest
         squareData.shuffle();
         squareData.printX();
         GradientDescent gd = new  GradientDescent();
-        Model linearModel = gd.solve(squareData);
-        Double errorCS = gd.validateControlSet(linearModel);
-        Double errorTS = gd.validateTrainigSet(linearModel);
+        Model model = gd.solve(squareData);
+        Double errorCS = gd.validateControlSet(model);
+        Double errorTS = gd.validateTrainigSet(model);
         System.out.println("Error CS = " + errorCS);
         System.out.println("Error TS = " + errorTS);
+        for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
+            Point p = new Point();
+            p.add(d);
+            p.add(0.0);
+            System.out.println("Scoring: " + d + ", result: " + model.apply(p));
+        }
+
     }
 
 }
