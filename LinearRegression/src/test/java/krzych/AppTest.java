@@ -39,7 +39,7 @@ public class AppTest
         data.shuffle();
         data.printX();
         GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data, 0.1, 0.0001);
+        Model model = gd.solve(data);
         Double errorCS = gd.validateControlSet(model);
         Double errorTS = gd.validateTrainigSet(model);
         System.out.println("Error CS = " + errorCS);
@@ -57,6 +57,11 @@ public class AppTest
         Double errorTS = gd.validateTrainigSet(model);
         System.out.println("Error CS = " + errorCS);
         System.out.println("Error TS = " + errorTS);
+        for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
+            Point p = new Point();
+            p.add(d);
+            System.out.println("Scoring: " + d + ", result: " + model.apply(p));
+        }
 
     }
 
@@ -74,7 +79,6 @@ public class AppTest
         for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
             Point p = new Point();
             p.add(d);
-            p.add(0.0);
             System.out.println("Scoring: " + d + ", result: " + model.apply(p));
         }
 

@@ -7,8 +7,8 @@ import java.util.List;
  */
 public class GradientDescent implements LinearRegressionSolver {
 
-    public double costFunctionThreshold = 0.000000001;
-    private Double alpha = 0.1;
+    public double costFunctionThreshold = 0.000001;
+    private Double alpha = 0.5;
     final double CONTROL_TEST_FACTOR = 0.2;
     private int startTrainingSet;
     private int endTrainingSet;
@@ -71,12 +71,13 @@ public class GradientDescent implements LinearRegressionSolver {
             Double originalY = dataPoints.get(j).getVector().get(y_index);
             Double descaledComputedY = datasetNormalizer.invertNumberScale(y_index, computedY);
             Double descaledOriginalY = datasetNormalizer.invertNumberScale(y_index, originalY);
+            Double scoredY = theta.applyScaled(dataPoints.get(j));
             Double diff= computedY - originalY;
             Double error = Math.abs (diff/ yValueRange);
             if (error > maxError) maxError = error;
             System.out.println(" get: " + descaledComputedY +" expected: "
                     + descaledOriginalY
-                    + " error: " + error);
+                    + " error: " + error + " scored Y: " + scoredY);
         }
         return maxError;
     }
@@ -84,15 +85,17 @@ public class GradientDescent implements LinearRegressionSolver {
     private Model gradientDescent() {
         int features = dataPoints.get(0).getVector().size() - 1;
         theta = new Model();
-        for (int i = 0;i <= features;++i) {
+        for (int i = 0;i < features;++i) {
             theta.getPoints().add(0.0);
         }
-        double cost;
+        double cost = 10000000;
+        double previousCost;
         do {
+            previousCost = cost;
             cost = htheta();
-            //System.out.println("XXXXXXXXXXXXXX Cost function = " + cost);
+            System.out.println("XXXXXXXXXXXXXX Cost function = " + cost);
             adjustTheta();
-        } while (cost > costFunctionThreshold);
+        } while (previousCost - cost > costFunctionThreshold);
         printTheta();
         theta.setNormalizer(datasetNormalizer);
         return theta;

@@ -18,7 +18,11 @@ public class Model {
     }
 
     public Double apply(Point p) {
-        normalizer.scaleVector(p);
+        normalizer.scaleXVector(p);
+        return applyScaled(p);
+    }
+
+    public Double applyScaled(Point p) {
         Double t = 0.0;
         for (int i =0; i < points.size(); ++i) {
             t+= points.get(i) * p.getVector().get(i);

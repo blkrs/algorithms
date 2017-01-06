@@ -11,6 +11,7 @@ public class DatasetNormalizer {
     private int width;
     private int height;
     private int yIndex;
+    private int xCount;
 
     private List<Point> dataPoints;
 
@@ -20,6 +21,8 @@ public class DatasetNormalizer {
         height = dataPoints.size();
         readMinMax();
         yIndex = width - 1;
+        xCount = width - 1;
+
     }
 
     public void featureScaling(Boolean invert) {
@@ -72,8 +75,8 @@ public class DatasetNormalizer {
         }
     }
 
-    public Point scaleVector(Point p) {
-        for (int i = 0; i < width; ++i) {
+    public Point scaleXVector(Point p) {
+        for (int i = 0; i < xCount; ++i) {
             p.set(i, scaleADouble(i, p.get(i)));
         }
         return p;

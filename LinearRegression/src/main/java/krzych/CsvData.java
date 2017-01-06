@@ -18,6 +18,7 @@ import java.util.Random;
 public class CsvData {
 
     private List<Point> dataPoints;
+    private List<Double> Y;
     private List<String> header;
     private ColumnsMapping columnsMapping;
     private int width = 0;
