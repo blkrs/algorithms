@@ -44,11 +44,12 @@ public class AppTest
         Double errorTS = gd.validateTrainigSet(model);
         System.out.println("Error CS = " + errorCS);
         System.out.println("Error TS = " + errorTS);
+        model.print();
     }
 
     public void testGradientDecentLinear() throws IOException {
         System.out.println("y = x dataset");
-        CsvData linearData = CsvData.readFile("src/test/resources/linear.csv");
+        CsvData linearData = CsvData.readFile("src/test/resources/linearyeqx.csv");
         linearData.shuffle();
         linearData.printX();
         GradientDescent gd = new GradientDescent();
@@ -62,6 +63,26 @@ public class AppTest
             p.add(d);
             System.out.println("Scoring: " + d + ", result: " + model.apply(p));
         }
+        model.print();
+
+    }
+    public void testGradientDecentLinearYeqXMinus20() throws IOException {
+        System.out.println("y = x dataset");
+        CsvData linearData = CsvData.readFile("src/test/resources/linearyeqxminus20.csv");
+        linearData.shuffle();
+        linearData.printX();
+        GradientDescent gd = new GradientDescent();
+        Model model = gd.solve(linearData);
+        Double errorCS = gd.validateControlSet(model);
+        Double errorTS = gd.validateTrainigSet(model);
+        System.out.println("Error CS = " + errorCS);
+        System.out.println("Error TS = " + errorTS);
+        for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
+            Point p = new Point();
+            p.add(d);
+            System.out.println("Scoring: " + d + ", result: " + model.apply(p));
+        }
+        model.print();
 
     }
 
@@ -81,6 +102,7 @@ public class AppTest
             p.add(d);
             System.out.println("Scoring: " + d + ", result: " + model.apply(p));
         }
+        model.print();
 
     }
 

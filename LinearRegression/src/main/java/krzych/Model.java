@@ -9,12 +9,12 @@ import lombok.Data;
 public class Model {
 
     // we want to know the how theta
-    private Point points;
+    private Point theta;
     // and
     private DatasetNormalizer normalizer;
 
     public Model() {
-        points = new Point();
+        theta = new Point();
     }
 
     public Double apply(Point p) {
@@ -24,9 +24,14 @@ public class Model {
 
     public Double applyScaled(Point p) {
         Double t = 0.0;
-        for (int i =0; i < points.size(); ++i) {
-            t+= points.get(i) * p.getVector().get(i);
+        for (int i = 0; i < theta.size(); ++i) {
+            t+= theta.get(i) * p.getVector().get(i);
         }
         return normalizer.invertScaleY(t);
+    }
+
+    public void print() {
+        System.out.println("Model size: " + theta.size());
+        theta.print();
     }
 }

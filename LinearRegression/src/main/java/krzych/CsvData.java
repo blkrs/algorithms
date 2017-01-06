@@ -17,38 +17,43 @@ import java.util.Random;
 @Data
 public class CsvData {
 
-    private List<Point> dataPoints;
+    private List<Point> X;
     private List<Double> Y;
-    private List<String> header;
     private ColumnsMapping columnsMapping;
     private int width = 0;
     private int height = 0;
 
 
     public CsvData() {
-        dataPoints = new ArrayList<Point>();
-        header = new ArrayList<String>();
+        X = new ArrayList<Point>();
+        Y = new ArrayList<Double>();
     }
 
     public void shuffle() {
         long seed = System.nanoTime();
-        Collections.shuffle(dataPoints, new Random(seed));
+        Collections.shuffle(X, new Random(seed));
+        Collections.shuffle(Y, new Random(seed));
+    }
+
+    public void addOnes() {
+        for (int row = 0; row < height; ++row) {
+
+        }
     }
 
     public void print() {
-        for (Point p : dataPoints
+        for (Point p : X
              ) {
              p.print();
         }
     }
 
     public void printX() {
-        for (Point p : dataPoints
+        for (Point p : X
                 ) {
             p.print(columnsMapping);
         }
     }
-
 
     public static CsvData readFile(String filePath) throws IOException {
         ColumnsMapping columnsMapping = new ColumnsMapping();
@@ -61,9 +66,9 @@ public class CsvData {
         }
 
         csvData.setColumnsMapping(columnsMapping);
-        csvData.setHeight(csvData.getDataPoints().size());
+        csvData.setHeight(csvData.getX().size());
         if (csvData.getHeight() > 0) {
-            csvData.setWidth(csvData.getDataPoints().get(0).getVector().size());
+            csvData.setWidth(csvData.getX().get(0).getVector().size());
         }
         return csvData;
     }
@@ -71,11 +76,12 @@ public class CsvData {
     private static void addRow(CsvData csvData, String line, ColumnsMapping columnsMapping) {
         String[] entries = line.split(",");
         Point p = new Point();
-        for (int columnNo = 0; columnNo < entries.length; ++columnNo) {
-            Double value = getaDouble(entries, columnNo, columnsMapping);
-            p.getVector().add(value);
+        int yIndex = entries.length - 1;
+        for (int columnNo = 0; columnNo < yIndex; ++columnNo) {
+            p.add(getaDouble(entries, columnNo, columnsMapping));
         }
-        csvData.getDataPoints().add(p);
+        csvData.getX().add(p);
+        csvData.getY().add(getaDouble(entries, yIndex, columnsMapping));
     }
 
     private static Double getaDouble(String entries[],int columnNo, ColumnsMapping columnsMapping) {

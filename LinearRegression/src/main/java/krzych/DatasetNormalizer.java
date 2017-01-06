@@ -1,38 +1,44 @@
 package krzych;
 
-import java.util.List;
-
 /**
  * Created by krzych on 06.01.17.
  */
 public class DatasetNormalizer {
     private Point minVals = new Point();
     private Point maxVals = new Point();
+    private double minY;
+    private double maxY;
     private int width;
     private int height;
-    private int yIndex;
-    private int xCount;
 
-    private List<Point> dataPoints;
+    private CsvData data;
 
     public DatasetNormalizer(CsvData dataset) {
-        dataPoints = dataset.getDataPoints();
-        width = dataPoints.get(0).getVector().size();
-        height = dataPoints.size();
-        readMinMax();
-        yIndex = width - 1;
-        xCount = width - 1;
-
+        data = dataset;
+        width = data.getX().get(0).size();
+        height = data.getX().size();
+        computeMinMax();
     }
 
     public void featureScaling(Boolean invert) {
         if (!invert) {
             for (int row = 0; row < height; ++row) {
-                scaleRow(row);
+                scaleXRow(row);
+                data.getY().set(row,
+                        scaleY(
+                                data.getY().get(row)
+                        )
+                );
             }
         } else {
-            for (int row = 0; row < height;++row )
-                revertScaleRow(row);
+            for (int row = 0; row < height;++row ) {
+                revertScaleXRow(row);
+                data.getY().set(row,
+                        invertScaleY(
+                                data.getY().get(row)
+                        )
+                );
+            }
         }
     }
 
@@ -55,74 +61,85 @@ public class DatasetNormalizer {
         return getMaxValue(column) - getMinValue(column);
     }
 
-    private void readMinMax() {
-        for (int i = 0;i < width; ++i) {
-            maxVals.getVector()
-                    .add(dataPoints.get(0).getVector().get(i));
-            minVals.getVector()
-                    .add(dataPoints.get(0).getVector().get(i));
-        }
+    public Double getRangeY() { return maxY - minY; }
 
-        for (int j = 1; j < height; ++j ) {
-            for (int i = 0;i < width; ++i) {
-                if (maxVals.getVector().get(i) < dataPoints.get(j).getVector().get(i)) {
-                    maxVals.getVector().set(i,dataPoints.get(j).getVector().get(i));
+    private void computeMinMax() {
+        minY = data.getY().get(0);
+        maxY = data.getY().get(0);
+        for (int column = 0;column < width; ++column) {
+            maxVals.add(data.getX().get(0).get(column));
+            minVals.add(data.getX().get(0).get(column));
+        }
+        for (int row = 1; row < height; ++row ) {
+            for (int column = 0;column < width; ++column) {
+                if (maxVals.get(column) < data.getX().get(row).get(column)) {
+                    maxVals.set(column,data.getX().get(row).get(column));
                 }
-                if (minVals.getVector().get(i) > dataPoints.get(j).getVector().get(i)) {
-                    minVals.getVector().set(i, dataPoints.get(j).getVector().get(i));
+                if (minVals.get(column) > data.getX().get(row).get(column)) {
+                    minVals.set(column, data.getX().get(row).get(column));
                 }
+            }
+            if (minY > data.getY().get(row)) {
+                minY = data.getY().get(row);
+            }
+            if (maxY < data.getY().get(row)) {
+                maxY = data.getY().get(row);
             }
         }
     }
 
     public Point scaleXVector(Point p) {
-        for (int i = 0; i < xCount; ++i) {
+        for (int i = 0; i < width; ++i) {
             p.set(i, scaleADouble(i, p.get(i)));
         }
         return p;
     }
 
-    public double invertScaleY(Double d) {
-        return invertScaleADouble(yIndex, d);
+    public double invertScaleY(Double y) {
+        return (y * (maxY - minY)) + minY;
+    }
+
+    public double scaleY(Double y) {
+        return (y - minY) / (maxY - minY);
     }
 
 
-    private void scaleRow(int rowIdx) {
+    private void scaleXRow(int rowIdx) {
         for (int i = 0; i < width; ++i) {
             scaleCell(rowIdx, i);
         }
     }
 
-    private void revertScaleRow(int rowIdx) {
+    private void revertScaleXRow(int rowIdx) {
         for (int i = 0; i < width; ++i) {
             invertScaleCell(rowIdx, i);
         }
     }
 
     private void scaleCell(int rowIdx, int columnIdx) {
-        dataPoints.get(rowIdx).getVector()
+        data.getX().get(rowIdx)
                 .set(columnIdx,
                         scaleADouble(columnIdx,
-                                     dataPoints.get(rowIdx).getVector().get(columnIdx)
+                                     data.getX().get(rowIdx).get(columnIdx)
                         )
                 );
     }
 
     private void invertScaleCell(int rowIdx, int columnIdx) {
-        dataPoints.get(rowIdx).getVector()
+        data.getX().get(rowIdx).getVector()
                 .set(columnIdx,
                         invertScaleADouble(columnIdx,
-                                dataPoints.get(rowIdx).getVector().get(columnIdx)
+                                data.getX().get(rowIdx).getVector().get(columnIdx)
                         )
                 );
     }
 
     private Double scaleADouble(int columnIdx, Double x) {
-        return (x - minVals.getVector().get(columnIdx)) / (maxVals.getVector().get(columnIdx) - minVals.getVector().get(columnIdx));
+        return (x - minVals.get(columnIdx)) / (maxVals.get(columnIdx) - minVals.get(columnIdx));
     }
 
     private Double invertScaleADouble(int columnIdx, Double x) {
-        return x * (maxVals.getVector().get(columnIdx) - minVals.getVector().get(columnIdx)) + minVals.getVector().get(columnIdx);
+        return x * (maxVals.get(columnIdx) - minVals.get(columnIdx)) + minVals.get(columnIdx);
     }
 
 }

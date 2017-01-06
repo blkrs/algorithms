@@ -37,10 +37,11 @@ public class DatasetNormalizerTest
      */
     public void testIfNormalizedDatainRange01() throws IOException {
         CsvData squareData = CsvData.readFile("src/test/resources/square.csv");
+        squareData.print();
         DatasetNormalizer normalizer = new DatasetNormalizer(squareData);
         normalizer.featureScaling(false);
 
-        for ( Point p : squareData.getDataPoints() ) {
+        for ( Point p : squareData.getX() ) {
             for (Double v :p.getVector()) {
                 assertTrue(v >= 0);
                 assertTrue(v <= 1);
