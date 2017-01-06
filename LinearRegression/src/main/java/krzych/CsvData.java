@@ -17,33 +17,37 @@ import java.util.Random;
 @Data
 public class CsvData {
 
-    private List<Point> points;
+    private List<Point> dataPoints;
     private List<String> header;
     private ColumnsMapping columnsMapping;
+    private int width = 0;
+    private int height = 0;
+
 
     public CsvData() {
-        points = new ArrayList<Point>();
+        dataPoints = new ArrayList<Point>();
         header = new ArrayList<String>();
     }
 
     public void shuffle() {
         long seed = System.nanoTime();
-        Collections.shuffle(points, new Random(seed));
+        Collections.shuffle(dataPoints, new Random(seed));
     }
 
     public void print() {
-        for (Point p :points
+        for (Point p : dataPoints
              ) {
              p.print();
         }
     }
 
     public void printX() {
-        for (Point p :points
+        for (Point p : dataPoints
                 ) {
             p.print(columnsMapping);
         }
     }
+
 
     public static CsvData readFile(String filePath) throws IOException {
         ColumnsMapping columnsMapping = new ColumnsMapping();
@@ -56,6 +60,10 @@ public class CsvData {
         }
 
         csvData.setColumnsMapping(columnsMapping);
+        csvData.setHeight(csvData.getDataPoints().size());
+        if (csvData.getHeight() > 0) {
+            csvData.setWidth(csvData.getDataPoints().get(0).getVector().size());
+        }
         return csvData;
     }
 
@@ -66,7 +74,7 @@ public class CsvData {
             Double value = getaDouble(entries, columnNo, columnsMapping);
             p.getVector().add(value);
         }
-        csvData.getPoints().add(p);
+        csvData.getDataPoints().add(p);
     }
 
     private static Double getaDouble(String entries[],int columnNo, ColumnsMapping columnsMapping) {
@@ -78,5 +86,6 @@ public class CsvData {
             return columnsMapping.getSDMapping(e, columnNo);
         }
     }
+
 
 }

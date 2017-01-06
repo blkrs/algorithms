@@ -1,6 +1,5 @@
 package krzych;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,27 +10,29 @@ public class GradientDescent implements LinearRegressionSolver {
     public double costFunctionThreshold = 0.000000001;
     private Double alpha = 0.1;
     final double CONTROL_TEST_FACTOR = 0.2;
-    int startTrainingSet;
-    int endTrainingSet;
-    int startControlSet;
-    int endControlSet;
-    int y_index;
-    List<Point> dataPoints;
-    List<Double> theta;
+    private int startTrainingSet;
+    private int endTrainingSet;
+    private int startControlSet;
+    private int endControlSet;
+    private int  y_index;
+    private List<Point> dataPoints;
+    private Model theta;
+    private DatasetNormalizer datasetNormalizer;
 
-    public void solve(CsvData data, Double alpha, Double costFunctionThreshold) {
+    public Model solve(CsvData data, Double alpha, Double costFunctionThreshold) {
         this.alpha = alpha;
         this.costFunctionThreshold = costFunctionThreshold;
-        solve(data);
+        return solve(data);
     }
 
-    public void solve(CsvData data) {
-        dataPoints = data.getPoints();
-        featureScaling();
+    public Model solve(CsvData data) {
+        dataPoints = data.getDataPoints();
         data.shuffle();
+        datasetNormalizer = new DatasetNormalizer(data);
+        datasetNormalizer.featureScaling(false);
 
-        Integer height = data.getPoints().size();
-        Integer width = data.getPoints().get(0).getVector().size();
+        Integer height = data.getDataPoints().size();
+        Integer width = data.getDataPoints().get(0).getVector().size();
 
         startTrainingSet = 0;
         endTrainingSet = (int)( (height - 1) * (1.0-CONTROL_TEST_FACTOR));
@@ -41,40 +42,59 @@ public class GradientDescent implements LinearRegressionSolver {
 
         System.out.println("Height = " + height + " " + width);
         System.out.println("End training set: " + endTrainingSet);
-        featureScaling();
-        gradientDescent();
-        validate();
-        printTheta();
+
+        return gradientDescent();
     }
 
     private void printTheta() {
-        for (int i =0; i < theta.size(); ++i) {
-            System.out.print("theta" + i + " = "  +theta.get(i) + " ,");
+        for (int i =0; i < theta.getPoints().size(); ++i) {
+            System.out.print("theta" + i + " = "  +theta.getPoints().get(i) + " ,");
         }
         System.out.println();
     }
 
-    private void validate() {
-        for (int j = startControlSet; j < endControlSet; ++j) {
-            Double diff= multiply(dataPoints.get(j), theta) - dataPoints.get(j).getVector().get(y_index);
-            System.out.println(" Get: " + multiply(dataPoints.get(j), theta) +" expected: "
-                    + dataPoints.get(j).getVector().get(y_index)
-                    + " error: " + diff);
-        }
+    public Double validateControlSet(Model theta) {
+        System.out.println("Validating control set");
+        return validateRange(theta, startControlSet, endControlSet);
     }
 
-    private void gradientDescent() {
-        int features = dataPoints.get(0).getVector().size() - 1;
-        theta = new ArrayList<Double>();
-        for (int i = 0;i <= features;++i) {
-            theta.add(20.0);
+    public Double validateTrainigSet(Model theta) {
+        System.out.println("Validating control set");
+        return validateRange(theta, startTrainingSet, endTrainingSet);
+    }
+
+    private Double validateRange(Model theta, int start, int end) {
+        Double maxError = 0.0;
+        Double yValueRange = datasetNormalizer.getRange(y_index);
+        for (int j = start; j < end; ++j) {
+            Double computedY = multiply(dataPoints.get(j), theta);
+            Double originalY = dataPoints.get(j).getVector().get(y_index);
+            Double descaledComputedY = datasetNormalizer.invertNumberScale(y_index, computedY);
+            Double descaledOriginalY = datasetNormalizer.invertNumberScale(y_index, originalY);
+            Double diff= computedY - originalY;
+            Double error = Math.abs (diff/ yValueRange);
+            if (error > maxError) maxError = error;
+            System.out.println(" Get: " + descaledComputedY +" expected: "
+                    + descaledOriginalY
+                    + " error: " + error);
         }
-        Double cost = 0.0;
+        return maxError;
+    }
+
+    private Model gradientDescent() {
+        int features = dataPoints.get(0).getVector().size() - 1;
+        theta = new Model();
+        for (int i = 0;i <= features;++i) {
+            theta.getPoints().add(0.0);
+        }
+        double cost;
         do {
             cost = htheta();
-            System.out.println("XXXXXXXXXXXXXX Cost function = " + cost);
+            //System.out.println("XXXXXXXXXXXXXX Cost function = " + cost);
             adjustTheta();
         } while (cost > costFunctionThreshold);
+        printTheta();
+        return theta;
     }
 
     private Double htheta() {
@@ -86,55 +106,21 @@ public class GradientDescent implements LinearRegressionSolver {
     }
 
     private void adjustTheta() {
-        for (int i =0; i < theta.size(); ++i) {
+        for (int i =0; i < theta.getPoints().size(); ++i) {
             Double temp = 0.0;
             for (int j = 0; j < endTrainingSet; ++j) {
                 temp += (multiply(dataPoints.get(j), theta) - dataPoints.get(j).getVector().get(y_index)) * dataPoints.get(j).getVector().get(i) / endTrainingSet;
             }
-            theta.set(i, theta.get(i) - alpha * temp);
+            theta.getPoints().set(i, theta.getPoints().get(i) - alpha * temp);
         }
     }
 
-    private Double multiply(Point p, List<Double> theta) {
+    private Double multiply(Point p, Model theta) {
         Double t = 0.0;
-        for (int i =0; i < theta.size(); ++i) {
-            t+= theta.get(i) * p.getVector().get(i);
+        for (int i =0; i < theta.getPoints().size(); ++i) {
+            t+= theta.getPoints().get(i) * p.getVector().get(i);
         }
         return t;
-    }
-
-    public void featureScaling() {
-        int width = dataPoints.get(0).getVector().size();
-        int height = dataPoints.size();
-        Point minVals = new Point();
-        Point maxVals = new Point();
-
-        for (int i = 0;i < width; ++i) {
-            maxVals.getVector()
-                    .add(dataPoints.get(0).getVector().get(i));
-            minVals.getVector()
-                    .add(dataPoints.get(0).getVector().get(i));
-        }
-
-        for (int j = 1; j < height; ++j ) {
-            for (int i = 0;i < width; ++i) {
-                if (maxVals.getVector().get(i) < dataPoints.get(j).getVector().get(i)) {
-                    maxVals.getVector().set(i,dataPoints.get(j).getVector().get(i));
-                }
-                if (minVals.getVector().get(i) > dataPoints.get(j).getVector().get(i)) {
-                    minVals.getVector().set(i, dataPoints.get(j).getVector().get(i));
-                }
-            }
-        }
-
-        for (int j = 0; j < height; ++j ) {
-            for (int i = 0;i < width; ++i) {
-                Double x = dataPoints.get(j).getVector().get(i);
-                Double xp = (x - minVals.getVector().get(i))/ (maxVals.getVector().get(i) - minVals.getVector().get(i));
-                dataPoints.get(j).getVector().set(i, xp);
-            }
-        }
-
     }
 
 }

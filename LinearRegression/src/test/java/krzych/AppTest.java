@@ -27,24 +27,52 @@ public class AppTest
      */
     public static Test suite()
     {
-        return new TestSuite( AppTest.class );
+        TestSuite allTests =  new TestSuite( AppTest.class );
+        allTests.addTest(DatasetNormalizerTest.suite());
+        return allTests;
     }
 
     /**
      * Rigourous Test :-)
      */
-    public void testApp() throws IOException {
-        assertTrue( true );
+    public void testGradientDescentIris() throws IOException {
+        System.out.println("Iris dataset");
         CsvData data = CsvData.readFile("src/test/resources/iris.csv");
         data.shuffle();
         data.printX();
-        new GradientDescent().solve(data, 0.1, 0.0001);
+        GradientDescent gd = new GradientDescent();
+        Model linearModel = gd.solve(data, 0.1, 0.0001);
+        Double errorCS = gd.validateControlSet(linearModel);
+        Double errorTS = gd.validateTrainigSet(linearModel);
+        System.out.println("Error CS = " + errorCS);
+        System.out.println("Error TS = " + errorTS);
+    }
 
-
+    public void testGradientDecentLinear() throws IOException {
+        System.out.println("y = x dataset");
         CsvData linearData = CsvData.readFile("src/test/resources/linear.csv");
         linearData.shuffle();
         linearData.printX();
-        new GradientDescent().solve(linearData);
+        GradientDescent gd = new GradientDescent();
+        Model linearModel = gd.solve(linearData);
+        Double errorCS = gd.validateControlSet(linearModel);
+        Double errorTS = gd.validateTrainigSet(linearModel);
+        System.out.println("Error CS = " + errorCS);
+        System.out.println("Error TS = " + errorTS);
+
+    }
+
+    public void testGradientDescentSquare() throws IOException {
+        System.out.println("y = x^ 2 dataset");
+        CsvData squareData = CsvData.readFile("src/test/resources/square.csv");
+        squareData.shuffle();
+        squareData.printX();
+        GradientDescent gd = new  GradientDescent();
+        Model linearModel = gd.solve(squareData);
+        Double errorCS = gd.validateControlSet(linearModel);
+        Double errorTS = gd.validateTrainigSet(linearModel);
+        System.out.println("Error CS = " + errorCS);
+        System.out.println("Error TS = " + errorTS);
     }
 
 }
