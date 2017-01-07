@@ -30,7 +30,7 @@ public class CsvData {
     }
 
     public void shuffle() {
-        long seed = System.nanoTime();
+        long seed = 123452;//System.nanoTime();
         Collections.shuffle(X, new Random(seed));
         Collections.shuffle(Y, new Random(seed));
     }

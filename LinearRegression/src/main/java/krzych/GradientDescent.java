@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class GradientDescent implements LinearRegressionSolver {
 
-    public double costFunctionThreshold = 0.000000001;
+    public double costFunctionThreshold = 0.0000000001;
     private Double alpha = 0.1;
     final double CONTROL_TEST_FACTOR = 0.2;
     private int startTrainingSet;
@@ -65,15 +65,14 @@ public class GradientDescent implements LinearRegressionSolver {
 
     private Double validateRange(Model theta, int start, int end) {
         Double maxError = 0.0;
-        Double yValueRange = datasetNormalizer.getRangeY();
         for (int row = start; row < end; ++row) {
             Double computedY = multiply(data.getX().get(row), theta);
             Double originalY = data.getY().get(row);
             Double descaledComputedY = datasetNormalizer.invertScaleY(computedY);
             Double descaledOriginalY = datasetNormalizer.invertScaleY(originalY);
             Double scoredY = theta.applyScaled(data.getX().get(row));
-            Double diff= computedY - originalY;
-            Double error = Math.abs (diff/ yValueRange);
+            Double diff = computedY - originalY;
+            Double error = Math.abs (diff/ descaledOriginalY);
             if (error > maxError) maxError = error;
             System.out.println(" get: " + descaledComputedY +" expected: "
                     + descaledOriginalY
@@ -93,7 +92,6 @@ public class GradientDescent implements LinearRegressionSolver {
         do {
             previousCost = cost;
             cost = htheta();
-          //  System.out.println("XXXXXXXXXXXXXX Cost function = " + cost);
             adjustTheta();
         } while (previousCost - cost > costFunctionThreshold);
         printTheta();

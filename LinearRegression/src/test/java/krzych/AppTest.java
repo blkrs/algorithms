@@ -45,6 +45,13 @@ public class AppTest
         System.out.println("Error CS = " + errorCS);
         System.out.println("Error TS = " + errorTS);
         model.print();
+        for (int row = 0; row < 10; ++row) {
+            Double calculatedY = model.apply(data.getX().get(row));
+            Double originalY =  model.getNormalizer().invertScaleY(data.getY().get(row));
+            System.out.println("Calculated y :" + calculatedY + " originalY: " + originalY);
+            assertTrue(Math.abs(calculatedY
+                    - originalY) < 0.5);
+        }
     }
 
     public void testGradientDecentLinear() throws IOException {
@@ -64,6 +71,8 @@ public class AppTest
             System.out.println("Scoring: " + d + ", result: " + model.apply(p));
         }
         model.print();
+        assertTrue(errorTS < 1.0/10000);
+        assertTrue(errorCS < 1.0/10000);
 
     }
     public void testGradientDecentLinearYeqXMinus20() throws IOException {
@@ -83,7 +92,8 @@ public class AppTest
             System.out.println("Scoring: " + d + ", result: " + model.apply(p));
         }
         model.print();
-
+        assertTrue(errorTS < 1.0/10000);
+        assertTrue(errorCS < 1.0/10000);
     }
 
     public void testGradientDescentSquare() throws IOException {
