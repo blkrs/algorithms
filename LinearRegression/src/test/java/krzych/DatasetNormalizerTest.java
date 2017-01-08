@@ -3,6 +3,7 @@ package krzych;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import java.util.Arrays;
 public class DatasetNormalizerTest
     extends TestCase
 {
+    final static Logger log = Logger.getLogger(DatasetNormalizerTest.class);
     /**
      * Create the test case
      *
@@ -41,7 +43,7 @@ public class DatasetNormalizerTest
         DatasetNormalizer normalizer = new DatasetNormalizer(squareData);
         normalizer.featureScaling(false);
 
-        for ( Point p : squareData.getX() ) {
+        for ( Point p : squareData.getFeaturesX() ) {
             for (Double v :p.getVector()) {
                 assertTrue(v >= 0);
                 assertTrue(v <= 1);

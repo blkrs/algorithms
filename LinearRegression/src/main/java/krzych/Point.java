@@ -1,9 +1,9 @@
 package krzych;
 
 import lombok.Data;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,9 +11,13 @@ import java.util.List;
  */
 @Data
 public class Point {
+    private static final Logger log = Logger.getLogger(Point.class);
+
     private List<Double> vector;
+
+
     public Point() {
-        vector = new ArrayList<Double>();
+        vector = new ArrayList<>();
     }
 
     public Double get(int i) {
@@ -33,25 +37,30 @@ public class Point {
     }
 
     public void print() {
+        StringBuilder builder = new StringBuilder();
         for (Double d: vector
              ) {
-            System.out.print("[ " + d + " ]");
+            builder.append("[ " + d + " ]");
         }
-        System.out.println("");
+        log.info(builder.toString());
     }
 
     public void print(ColumnsMapping mapping) {
         int column = 0;
+        StringBuilder builder = new StringBuilder();
         for (Double d: vector
                 ) {
             if (!mapping.isColumnMapped(column)) {
-                System.out.print("[ " + d + " ]");
+                builder.append("[ " + d + " ]");
             } else {
-                System.out.print("[ " + mapping.getDSMapping(column, d) + " ]");
+                builder.append("[ " + mapping.getDSMapping(column, d) + " ]");
             }
             column++;
         }
-        System.out.println("");
+        log.info(builder.toString());
     }
 
+    public void add(int i, double val) {
+        vector.add(i, val);
+    }
 }
