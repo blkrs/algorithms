@@ -99,7 +99,6 @@ public class CsvData {
             return Double.valueOf(e);
         } catch (NumberFormatException ex) {
             // text value found - we have to create mapping text to double
-            // for simplicity we don't split
             return columnsMapping.getSDMapping(e, columnNo);
         }
     }

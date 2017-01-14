@@ -33,6 +33,14 @@ public class Model {
         return normalizer.invertScaleY(t);
     }
 
+    Double applyScaledWith1(Point p) {
+        Double t = 0.0;
+        for (int i = 0; i < theta.size(); ++i) {
+            t+= theta.get(i) * p.getVector().get(i);
+        }
+        return normalizer.invertScaleY(t);
+    }
+
     void print() {
         log.info(this.toString());
     }

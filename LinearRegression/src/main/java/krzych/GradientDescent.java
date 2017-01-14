@@ -5,10 +5,10 @@ import org.apache.log4j.Logger;
 /**
  * Created by krzych on 28.12.16.
  */
-public class GradientDescent implements LinearRegressionSolver {
+public class GradientDescent extends LinearRegressionSolver {
 
     private static final Logger log = Logger.getLogger(GradientDescent.class);
-    private double costFunctionThreshold = 0.0000000001;
+
     private Double alpha = 0.1;
     private final double controlTestRatio = 0.2;
     private int startTrainingSet;
@@ -68,13 +68,12 @@ public class GradientDescent implements LinearRegressionSolver {
     private Double validateRange(Model theta, int start, int end) {
         Double maxError = 0.0;
         for (int row = start; row < end; ++row) {
-            Double computedY = multiply(data.getFeaturesX().get(row), theta);
+            Double scoredY = theta.applyScaledWith1(data.getFeaturesX().get(row));
             Double originalY = data.getDependedVarsY().get(row);
-            Double descaledComputedY = datasetNormalizer.invertScaleY(computedY);
+            Double descaledComputedY = datasetNormalizer.invertScaleY(scoredY);
             Double descaledOriginalY = datasetNormalizer.invertScaleY(originalY);
-            Double scoredY = theta.applyScaled(data.getFeaturesX().get(row));
             log.info("SCoredY " + scoredY + " descaled Computed Y " + descaledComputedY);
-            Double diff = computedY - originalY;
+            Double diff = scoredY - originalY;
             Double error = Math.abs (diff/ descaledOriginalY);
             if (error > maxError)
                 maxError = error;
@@ -82,25 +81,23 @@ public class GradientDescent implements LinearRegressionSolver {
         return maxError;
     }
 
-    private Model gradientDescent() {
+    @Override
+    protected Model getModel() {
+        theta.setNormalizer(datasetNormalizer);
+        return theta;
+    }
+
+    @Override
+    protected void initTheta() {
         int features = data.getFeaturesX().get(0).size();
         theta = new Model();
         for (int i = 0;i < features;++i) {
             theta.getTheta().add(0.0);
         }
-        double cost = 10000000;
-        double previousCost;
-        do {
-            previousCost = cost;
-            cost = htheta();
-            adjustTheta();
-        } while (previousCost - cost > costFunctionThreshold);
-        printTheta();
-        theta.setNormalizer(datasetNormalizer);
-        return theta;
     }
 
-    private Double htheta() {
+    @Override
+    protected Double costFunction() {
         Double totalCost = 0.0;
         for (int row = 0; row < endTrainingSet; ++row) {
             totalCost += Math.pow(multiply(data.getFeaturesX().get(row), theta) - data.getDependedVarsY().get(row),2)/endTrainingSet;
@@ -108,7 +105,8 @@ public class GradientDescent implements LinearRegressionSolver {
         return totalCost/2;
     }
 
-    private void adjustTheta() {
+    @Override
+    protected void adjustTheta() {
         for (int column = 0; column < theta.getTheta().size(); ++column) {
             Double temp = 0.0;
             for (int row = 0; row < endTrainingSet; ++row) {
