@@ -5,21 +5,7 @@ package krzych;
  */
 public abstract class LinearRegressionSolver {
 
-    protected double costFunctionThreshold = 0.0000000001;
-
     public abstract Model solve(CsvData data);
-
-    public Model gradientDescent() {
-        initTheta();
-        double cost = 10000000;
-        double previousCost;
-        do {
-            previousCost = cost;
-            cost = costFunction();
-            adjustTheta();
-        } while (previousCost - cost > costFunctionThreshold);
-        return getModel();
-    }
 
     protected abstract Model getModel();
 

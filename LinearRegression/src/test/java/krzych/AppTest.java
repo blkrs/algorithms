@@ -47,6 +47,35 @@ public class AppTest
         log.info("Error CS = " + errorCS);
         log.info("Error TS = " + errorTS);
         model.print();
+        double avgError = 0;
+        int count = 50;
+        for (int row = 0; row < count; ++row) {
+            Double calculatedY = model.apply(data.getFeaturesX().get(row));
+            Double originalY =  model.getNormalizer().invertScaleY(data.getDependedVarsY().get(row));
+            log.info("Calculated y :" + calculatedY + " originalY: " + originalY);
+            avgError += Math.abs(originalY - calculatedY) / originalY ;
+            assertTrue(Math.abs(calculatedY
+                    - originalY) < 1.2);
+        }
+        avgError/=count;
+        log.info("AVG error: " + avgError);
+        assertTrue(avgError < 0.174);
+    }
+
+    // in this test we want to make sure that if we round the answer to integer,
+    // then we will have no errors
+    public void testGradientDescentIrisRigorious() throws IOException {
+        log.info("Iris dataset");
+        CsvData data = CsvData.readFile("src/test/resources/iris.csv");
+        data.shuffle();
+        data.printX();
+        GradientDescent gd = new GradientDescent();
+        Model model = gd.solve(data);
+        Double errorCS = gd.validateControlSet(model);
+        Double errorTS = gd.validateTrainigSet(model);
+        log.info("Error CS = " + errorCS);
+        log.info("Error TS = " + errorTS);
+        model.print();
         for (int row = 0; row < 10; ++row) {
             Double calculatedY = model.apply(data.getFeaturesX().get(row));
             Double originalY =  model.getNormalizer().invertScaleY(data.getDependedVarsY().get(row));
@@ -72,8 +101,8 @@ public class AppTest
             log.info("Scoring: " + d + ", result: " + model.apply(p));
         }
         model.print();
-        assertTrue(errorTS < 1.0/10000);
-        assertTrue(errorCS < 1.0/10000);
+        assertTrue(errorTS < 1.0/100);
+        assertTrue(errorCS < 1.0/100);
 
     }
     public void testGradientDecentLinearYeqXMinus20() throws IOException {
@@ -92,8 +121,8 @@ public class AppTest
             log.info("Scoring: " + d + ", result: " + model.apply(p));
         }
         model.print();
-        assertTrue(errorTS < 1.0/10000);
-        assertTrue(errorCS < 1.0/10000);
+        assertTrue(errorTS < 1.0/100);
+        assertTrue(errorCS < 1.0/100);
     }
 
     public void testGradientDescentSquare() throws IOException {

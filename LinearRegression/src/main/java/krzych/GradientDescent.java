@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 public class GradientDescent extends LinearRegressionSolver {
 
     private static final Logger log = Logger.getLogger(GradientDescent.class);
+    protected double costFunctionThreshold = 0.0000000001;
 
     private Double alpha = 0.1;
     private final double controlTestRatio = 0.2;
@@ -70,10 +71,9 @@ public class GradientDescent extends LinearRegressionSolver {
         for (int row = start; row < end; ++row) {
             Double scoredY = theta.applyScaledWith1(data.getFeaturesX().get(row));
             Double originalY = data.getDependedVarsY().get(row);
-            Double descaledComputedY = datasetNormalizer.invertScaleY(scoredY);
             Double descaledOriginalY = datasetNormalizer.invertScaleY(originalY);
-            log.info("SCoredY " + scoredY + " descaled Computed Y " + descaledComputedY);
-            Double diff = scoredY - originalY;
+            log.info("Descaled SCoredY " + scoredY+ " descaled Original Y " + descaledOriginalY);
+            Double diff = scoredY - descaledOriginalY;
             Double error = Math.abs (diff/ descaledOriginalY);
             if (error > maxError)
                 maxError = error;
@@ -124,4 +124,15 @@ public class GradientDescent extends LinearRegressionSolver {
         return t;
     }
 
+    public Model gradientDescent() {
+        initTheta();
+        double cost = 10000000;
+        double previousCost;
+        do {
+            previousCost = cost;
+            cost = costFunction();
+            adjustTheta();
+        } while (previousCost - cost > costFunctionThreshold);
+        return getModel();
+    }
 }
