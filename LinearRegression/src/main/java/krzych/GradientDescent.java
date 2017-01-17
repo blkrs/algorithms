@@ -5,115 +5,63 @@ import org.apache.log4j.Logger;
 /**
  * Created by krzych on 28.12.16.
  */
-public class GradientDescent extends LinearRegressionSolver {
+public class GradientDescent {
 
     private static final Logger log = Logger.getLogger(GradientDescent.class);
     protected double costFunctionThreshold = 0.0000000001;
 
     private Double alpha = 0.1;
-    private final double controlTestRatio = 0.2;
-    private int startTrainingSet;
-    private int endTrainingSet;
-    private int startControlSet;
-    private int endControlSet;
-    private CsvData data;
     private Model theta;
     private DatasetNormalizer datasetNormalizer;
 
+    private CsvData data;
+
     public Model solve(CsvData data, Double alpha, Double costFunctionThreshold) {
-        this.data =data;
+        this.data = data;
         this.alpha = alpha;
         this.costFunctionThreshold = costFunctionThreshold;
         return solve(data);
     }
 
-    @Override
     public Model solve(CsvData data) {
         this.data = data;
         data.shuffle();
-
         datasetNormalizer = new DatasetNormalizer(data);
         datasetNormalizer.featureScaling(false);
-
         data.addOnes();
-
-
-        Integer height = data.getFeaturesX().size();
-        Integer width = data.getFeaturesX().get(0).size();
-
-        startTrainingSet = 0;
-        endTrainingSet = (int)( (height - 1) * (1.0- controlTestRatio));
-        startControlSet = endTrainingSet + 1;
-        endControlSet = height - 1;
-
-        log.info("Height = " + height + " " + width);
-        log.info("End training set: " + endTrainingSet);
-
         return gradientDescent();
     }
 
-    private void printTheta() {
-        log.info("theta " + theta.toString());
+
+    private Model gradientDescent() {
+        initTheta();
+        double cost = 10000000;
+        double previousCost;
+        do {
+            previousCost = cost;
+            cost = costFunction();
+            descent();
+        } while (previousCost - cost > costFunctionThreshold);
+        return getModel();
     }
 
-    Double validateControlSet(Model theta) {
-        log.info("Validating control set");
-        return validateRange(theta, startControlSet, endControlSet);
-    }
-
-    Double validateTrainigSet(Model theta) {
-        log.info("Validating training set");
-        return validateRange(theta, startTrainingSet, endTrainingSet);
-    }
-
-    private Double validateRange(Model theta, int start, int end) {
-        Double maxError = 0.0;
-        for (int row = start; row < end; ++row) {
-            Double scoredY = theta.applyScaledWith1(data.getFeaturesX().get(row));
-            Double originalY = data.getDependedVarsY().get(row);
-            Double descaledOriginalY = datasetNormalizer.invertScaleY(originalY);
-            log.info("Descaled SCoredY " + scoredY+ " descaled Original Y " + descaledOriginalY);
-            Double diff = scoredY - descaledOriginalY;
-            Double error = Math.abs (diff/ descaledOriginalY);
-            if (error > maxError)
-                maxError = error;
-        }
-        return maxError;
-    }
-
-    @Override
-    protected Model getModel() {
-        theta.setNormalizer(datasetNormalizer);
-        return theta;
-    }
-
-    @Override
-    protected void initTheta() {
-        int features = data.getFeaturesX().get(0).size();
-        theta = new Model();
-        for (int i = 0;i < features;++i) {
-            theta.getTheta().add(0.0);
-        }
-    }
-
-    @Override
-    protected Double costFunction() {
-        Double totalCost = 0.0;
-        for (int row = 0; row < endTrainingSet; ++row) {
-            totalCost += Math.pow(multiply(data.getFeaturesX().get(row), theta) - data.getDependedVarsY().get(row),2)/endTrainingSet;
-        }
-        return totalCost/2;
-    }
-
-    @Override
-    protected void adjustTheta() {
+    private void descent() {
         for (int column = 0; column < theta.getTheta().size(); ++column) {
             Double temp = 0.0;
-            for (int row = 0; row < endTrainingSet; ++row) {
-                temp += (multiply(data.getFeaturesX().get(row), theta) - data.getDependedVarsY().get(row)) * data.getFeaturesX().get(row).get(column) / endTrainingSet;
+            for (int row = 0; row < data.getFeaturesX().size(); ++row) {
+                temp += (multiply(data.getFeaturesX().get(row), theta) - data.getDependedVarsY().get(row))
+                        * data.getFeaturesX().get(row).get(column) / data.getFeaturesX().size();
             }
             theta.getTheta().set(column, theta.getTheta().get(column) - alpha * temp);
         }
+    }
+
+    private Double costFunction() {
+        Double totalCost = 0.0;
+        for (int row = 0; row < data.getFeaturesX().size(); ++row) {
+            totalCost += Math.pow(multiply(data.getFeaturesX().get(row), theta) - data.getDependedVarsY().get(row),2)/data.getFeaturesX().size();
+        }
+        return totalCost/2;
     }
 
     private Double multiply(Point p, Model theta) {
@@ -124,15 +72,19 @@ public class GradientDescent extends LinearRegressionSolver {
         return t;
     }
 
-    public Model gradientDescent() {
-        initTheta();
-        double cost = 10000000;
-        double previousCost;
-        do {
-            previousCost = cost;
-            cost = costFunction();
-            adjustTheta();
-        } while (previousCost - cost > costFunctionThreshold);
-        return getModel();
+
+    private Model getModel() {
+        theta.setNormalizer(datasetNormalizer);
+        return theta;
     }
+
+    private void initTheta() {
+        int features = data.getFeaturesX().get(0).size();
+        theta = new Model();
+        for (int i = 0;i < features;++i) {
+            theta.getTheta().add(0.0);
+        }
+    }
+
+
 }

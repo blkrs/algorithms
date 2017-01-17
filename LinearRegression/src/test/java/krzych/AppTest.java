@@ -42,8 +42,9 @@ public class AppTest
         data.printX();
         GradientDescent gd = new GradientDescent();
         Model model = gd.solve(data);
-        Double errorCS = gd.validateControlSet(model);
-        Double errorTS = gd.validateTrainigSet(model);
+        ModelValidator validator = new ModelValidator(data);
+        Double errorCS = validator.validateControlSet(model);
+        Double errorTS = validator.validateTrainigSet(model);
         log.info("Error CS = " + errorCS);
         log.info("Error TS = " + errorTS);
         model.print();
@@ -71,8 +72,9 @@ public class AppTest
         data.printX();
         GradientDescent gd = new GradientDescent();
         Model model = gd.solve(data);
-        Double errorCS = gd.validateControlSet(model);
-        Double errorTS = gd.validateTrainigSet(model);
+        ModelValidator validator = new ModelValidator(data);
+        Double errorCS = validator.validateControlSet(model);
+        Double errorTS = validator.validateTrainigSet(model);
         log.info("Error CS = " + errorCS);
         log.info("Error TS = " + errorTS);
         model.print();
@@ -91,8 +93,9 @@ public class AppTest
         linearData.shuffle();
         GradientDescent gd = new GradientDescent();
         Model model = gd.solve(linearData);
-        Double errorCS = gd.validateControlSet(model);
-        Double errorTS = gd.validateTrainigSet(model);
+        ModelValidator validator = new ModelValidator(linearData);
+        Double errorCS = validator.validateControlSet(model);
+        Double errorTS = validator.validateTrainigSet(model);
         log.info("Error CS = " + errorCS);
         log.info("Error TS = " + errorTS);
         for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
@@ -111,8 +114,9 @@ public class AppTest
         linearData.shuffle();
         GradientDescent gd = new GradientDescent();
         Model model = gd.solve(linearData);
-        Double errorCS = gd.validateControlSet(model);
-        Double errorTS = gd.validateTrainigSet(model);
+        ModelValidator validator = new ModelValidator(linearData);
+        Double errorCS = validator.validateControlSet(model);
+        Double errorTS = validator.validateTrainigSet(model);
         log.info("Error CS = " + errorCS);
         log.info("Error TS = " + errorTS);
         for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
@@ -131,8 +135,9 @@ public class AppTest
         squareData.shuffle();
         GradientDescent gd = new  GradientDescent();
         Model model = gd.solve(squareData);
-        Double errorCS = gd.validateControlSet(model);
-        Double errorTS = gd.validateTrainigSet(model);
+        ModelValidator validator = new ModelValidator(squareData);
+        Double errorCS = validator.validateControlSet(model);
+        Double errorTS = validator.validateTrainigSet(model);
         log.info("Error CS = " + errorCS);
         log.info("Error TS = " + errorTS);
         for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
@@ -141,7 +146,6 @@ public class AppTest
             log.info("Scoring: " + d + ", result: " + model.apply(p));
         }
         model.print();
-
     }
 
 }
