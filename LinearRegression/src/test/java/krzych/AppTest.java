@@ -32,6 +32,7 @@ public class AppTest
     {
         TestSuite allTests =  new TestSuite( AppTest.class );
         allTests.addTest(DatasetNormalizerTest.suite());
+        allTests.addTest(DatasetSplitterTest.suite());
         return allTests;
     }
 

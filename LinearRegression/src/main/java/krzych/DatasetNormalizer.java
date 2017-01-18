@@ -20,7 +20,7 @@ public class DatasetNormalizer {
         data = dataset;
         width = data.getFeaturesX().get(0).size();
         height = data.getFeaturesX().size();
-        computeMinMax();
+        computeBounds();
     }
 
     public void featureScaling(Boolean invert) {
@@ -53,7 +53,7 @@ public class DatasetNormalizer {
         return invertScaleADouble(columnIdx, val);
     }
 
-    private void computeMinMax() {
+    private void computeBounds() {
         minY = data.getDependedVarsY().get(0);
         maxY = data.getDependedVarsY().get(0);
         for (int column = 0;column < width; ++column) {
