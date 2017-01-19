@@ -46,15 +46,26 @@ public class DatasetSplitterTest
         assertTrue(originalData.getFeaturesX().size() - secondHalf.getFeaturesX().size() <= 1);
     }
 
-    public void testSplitLast20Percent() throws IOException {
+    public void testSplitInRightProportion() throws IOException {
         CsvData originalData = CsvData.readFile("src/test/resources/iris.csv");
         log.info("Original dataset size before split: "  +originalData.getFeaturesX().size());
         double ratio = 0.2;
-        CsvData secondHalf = DatasetSplitter.splitWithRatio(originalData, ratio);
+        CsvData secondPart = DatasetSplitter.splitWithRatio(originalData, ratio);
         log.info("Original dataset size after split: "  +originalData.getFeaturesX().size());
-        log.info("Created dataset size after split: "  +secondHalf.getFeaturesX().size());
+        log.info("Created dataset size after split: "  +secondPart.getFeaturesX().size());
         double howManyTimesIsFirstPartBigger = (1 - ratio) / ratio;
-        assertTrue(originalData.getFeaturesX().size() - secondHalf.getFeaturesX().size() * howManyTimesIsFirstPartBigger <= 1);
+        assertEquals((double)originalData.getHeight(), secondPart.getHeight() * howManyTimesIsFirstPartBigger);
+        assertTrue(originalData.getFeaturesX().size() - secondPart.getFeaturesX().size() * howManyTimesIsFirstPartBigger <= 1);
+    }
+
+    public void testSplitHasEqualWidth() throws IOException {
+        CsvData originalData = CsvData.readFile("src/test/resources/iris.csv");
+        log.info("Original dataset size before split: "  + originalData.getFeaturesX().size());
+        double ratio = 0.2;
+        CsvData secondPart = DatasetSplitter.splitWithRatio(originalData, ratio);
+        log.info("Original dataset size after split: "  + originalData.getFeaturesX().size());
+        log.info("Created dataset size after split: "  + secondPart.getFeaturesX().size());
+        assertEquals(originalData.getFeaturesX().get(0).size(), secondPart.getFeaturesX().get(0).size());
     }
 
 

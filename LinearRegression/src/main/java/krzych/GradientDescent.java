@@ -12,7 +12,6 @@ public class GradientDescent {
 
     private Double alpha = 0.1;
     private Model theta;
-    private DatasetNormalizer datasetNormalizer;
 
     private CsvData data;
 
@@ -25,10 +24,6 @@ public class GradientDescent {
 
     public Model solve(CsvData data) {
         this.data = data;
-        data.shuffle();
-        datasetNormalizer = new DatasetNormalizer(data);
-        datasetNormalizer.featureScaling(false);
-        data.addOnes();
         return gradientDescent();
     }
 
@@ -74,7 +69,6 @@ public class GradientDescent {
 
 
     private Model getModel() {
-        theta.setNormalizer(datasetNormalizer);
         return theta;
     }
 

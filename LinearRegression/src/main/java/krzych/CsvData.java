@@ -22,9 +22,16 @@ public class CsvData {
     private List<Point> featuresX;
     private List<Double> dependedVarsY;
     private ColumnsMapping columnsMapping;
-    private int width = 0;
-    private int height = 0;
 
+
+    public int getHeight() {
+        return featuresX.size();
+    }
+
+    public int getWidth() {
+        if (getHeight() == 0) return 0;
+        return featuresX.get(0).getVector().size();
+    }
 
     public CsvData() {
         featuresX = new ArrayList<>();
@@ -74,10 +81,6 @@ public class CsvData {
             }
 
             csvData.setColumnsMapping(columnsMapping);
-            csvData.setHeight(csvData.getFeaturesX().size());
-            if (csvData.getHeight() > 0) {
-                csvData.setWidth(csvData.getFeaturesX().get(0).getVector().size());
-            }
             return csvData;
         }
     }

@@ -12,7 +12,7 @@ public class DatasetSplitter {
         CsvData created = new CsvData();
         created.setColumnsMapping(original.getColumnsMapping());
         int height = original.getHeight();
-        int startSplit = (int) ((double) height * ratio);
+        int startSplit = (int) ((double) height * (1 - ratio));
         log.info("Start split = " + startSplit);
         int endSplit = height;
 
