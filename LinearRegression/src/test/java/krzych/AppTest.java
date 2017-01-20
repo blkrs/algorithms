@@ -37,20 +37,14 @@ public class AppTest
 
     public void testGradientDescentIris() throws IOException {
         log.info("Iris dataset");
-        CsvData data = CsvData.readFile("src/test/resources/iris.csv");
-
-        DatasetNormalizer normalizer = new DatasetNormalizer(data);
-        normalizer.featureScaling(false);
-        data.shuffle();
-        data.addOnes();
-        CsvData controlSet = DatasetSplitter.splitWithRatio(data, 0.2);
+        DataSuite data = DataSuite.readFile("src/test/resources/iris.csv");
 
         GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data);
-        model.setNormalizer(normalizer);
+        Model model = gd.solve(data.trainingSet);
+        model.setNormalizer(data.normalizer);
 
-        ModelValidator trainingSetValidator = new ModelValidator(data);
-        ModelValidator controlSetValidator = new ModelValidator(controlSet);
+        ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
+        ModelValidator controlSetValidator = new ModelValidator(data.controlSet);
         Double errorCS = trainingSetValidator.validateSet(model);
         Double errorTS = controlSetValidator.validateSet(model);
 
@@ -59,15 +53,15 @@ public class AppTest
         model.print();
         double avgError = 0;
 
-        for (int row = 0; row < data.getHeight(); ++row) {
-            Double calculatedY = model.apply(data.getFeaturesX().get(row));
-            Double originalY =  model.getNormalizer().invertScaleY(data.getDependedVarsY().get(row));
+        for (int row = 0; row < data.controlSet.getHeight(); ++row) {
+            Double calculatedY = model.apply(data.controlSet.getFeaturesX().get(row));
+            Double originalY =  model.getNormalizer().invertScaleY(data.controlSet.getDependedVarsY().get(row));
             log.info("Calculated y :" + calculatedY + " originalY: " + originalY);
             avgError += Math.abs(originalY - calculatedY) / originalY ;
             assertTrue(Math.abs(calculatedY
                     - originalY) < 1.2);
         }
-        avgError/=data.getHeight();
+        avgError/=data.controlSet.getHeight();
         log.info("AVG error: " + avgError);
         assertTrue(avgError < 0.174);
     }
@@ -76,27 +70,22 @@ public class AppTest
     // then we will have no errors
     public void testGradientDescentIrisRigorious() throws IOException {
         log.info("Iris dataset");
-        CsvData data = CsvData.readFile("src/test/resources/iris.csv");
-        DatasetNormalizer normalizer = new DatasetNormalizer(data);
-        normalizer.featureScaling(false);
-        data.shuffle();
-        data.addOnes();
-        CsvData controlSet = DatasetSplitter.splitWithRatio(data, 0.2);
+        DataSuite data = DataSuite.readFile("src/test/resources/iris.csv");
 
         GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data);
-        model.setNormalizer(normalizer);
+        Model model = gd.solve(data.trainingSet);
+        model.setNormalizer(data.normalizer);
 
-        ModelValidator trainingSetValidator = new ModelValidator(data);
-        ModelValidator controlSetValidator = new ModelValidator(controlSet);
+        ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
+        ModelValidator controlSetValidator = new ModelValidator(data.controlSet);
         Double errorCS = trainingSetValidator.validateSet(model);
         Double errorTS = controlSetValidator.validateSet(model);
         log.info("Error CS = " + errorCS);
         log.info("Error TS = " + errorTS);
         model.print();
         for (int row = 0; row < 10; ++row) {
-            Double calculatedY = model.apply(data.getFeaturesX().get(row));
-            Double originalY =  model.getNormalizer().invertScaleY(data.getDependedVarsY().get(row));
+            Double calculatedY = model.apply(data.controlSet.getFeaturesX().get(row));
+            Double originalY =  model.getNormalizer().invertScaleY(data.controlSet.getDependedVarsY().get(row));
             log.info("Calculated y :" + calculatedY + " originalY: " + originalY);
             assertTrue(Math.abs(calculatedY
                     - originalY) < 0.5);
@@ -105,19 +94,13 @@ public class AppTest
 
     public void testGradientDecentLinear() throws IOException {
         log.info("y = x dataset");
-        CsvData data = CsvData.readFile("src/test/resources/linearyeqx.csv");
-        DatasetNormalizer normalizer = new DatasetNormalizer(data);
-        normalizer.featureScaling(false);
-        data.shuffle();
-        data.addOnes();
-        CsvData controlSet = DatasetSplitter.splitWithRatio(data, 0.2);
+        DataSuite data = DataSuite.readFile("src/test/resources/linearyeqx.csv");
 
         GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data);
-        model.setNormalizer(normalizer);
-
-        ModelValidator trainingSetValidator = new ModelValidator(data);
-        ModelValidator controlSetValidator = new ModelValidator(controlSet);
+        Model model = gd.solve(data.trainingSet);
+        model.setNormalizer(data.normalizer);
+        ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
+        ModelValidator controlSetValidator = new ModelValidator(data.controlSet);
 
         Double errorCS = trainingSetValidator.validateSet(model);
         Double errorTS = controlSetValidator.validateSet(model);
@@ -135,19 +118,14 @@ public class AppTest
     }
     public void testGradientDecentLinearYeqXMinus20() throws IOException {
         log.info("y = x dataset");
-        CsvData data = CsvData.readFile("src/test/resources/linearyeqxminus20.csv");
-        DatasetNormalizer normalizer = new DatasetNormalizer(data);
-        normalizer.featureScaling(false);
-        data.shuffle();
-        data.addOnes();
-        CsvData controlSet = DatasetSplitter.splitWithRatio(data, 0.2);
+        DataSuite data = DataSuite.readFile("src/test/resources/linearyeqxminus20.csv");
 
         GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data);
-        model.setNormalizer(normalizer);
+        Model model = gd.solve(data.trainingSet);
+        model.setNormalizer(data.normalizer);
 
-        ModelValidator trainingSetValidator = new ModelValidator(data);
-        ModelValidator controlSetValidator = new ModelValidator(controlSet);
+        ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
+        ModelValidator controlSetValidator = new ModelValidator(data.controlSet);
         Double errorCS = trainingSetValidator.validateSet(model);
         Double errorTS = controlSetValidator.validateSet(model);
 
@@ -165,19 +143,14 @@ public class AppTest
 
     public void testGradientDescentSquare() throws IOException {
         log.info("y = x^ 2 dataset");
-        CsvData data = CsvData.readFile("src/test/resources/square.csv");
-        DatasetNormalizer normalizer = new DatasetNormalizer(data);
-        normalizer.featureScaling(false);
-        data.shuffle();
-        data.addOnes();
-        CsvData controlSet = DatasetSplitter.splitWithRatio(data, 0.2);
+        DataSuite data = DataSuite.readFile("src/test/resources/square.csv");
 
         GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data);
-        model.setNormalizer(normalizer);
+        Model model = gd.solve(data.trainingSet);
+        model.setNormalizer(data.normalizer);
 
-        ModelValidator trainingSetValidator = new ModelValidator(data);
-        ModelValidator controlSetValidator = new ModelValidator(controlSet);
+        ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
+        ModelValidator controlSetValidator = new ModelValidator(data.controlSet);
         Double errorCS = trainingSetValidator.validateSet(model);
         Double errorTS = controlSetValidator.validateSet(model);
 

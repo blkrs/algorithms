@@ -41,7 +41,7 @@ public class DatasetNormalizerTest
         CsvData squareData = CsvData.readFile("src/test/resources/square.csv");
         squareData.print();
         DatasetNormalizer normalizer = new DatasetNormalizer(squareData);
-        normalizer.featureScaling(false);
+        normalizer.scalingFeatures();
 
         for ( Point p : squareData.getFeaturesX() ) {
             for (Double v :p.getVector()) {

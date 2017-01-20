@@ -23,27 +23,29 @@ public class DatasetNormalizer {
         computeBounds();
     }
 
-    public void featureScaling(Boolean invert) {
-        if (!invert) {
-            for (int row = 0; row < height; ++row) {
-                scaleXRow(row);
-                data.getDependedVarsY().set(row,
-                        scaleY(
-                                data.getDependedVarsY().get(row)
-                        )
-                );
-            }
-        } else {
-            for (int row = 0; row < height;++row ) {
-                revertScaleXRow(row);
-                data.getDependedVarsY().set(row,
-                        invertScaleY(
-                                data.getDependedVarsY().get(row)
-                        )
-                );
-            }
+    public void scalingFeatures() {
+        for (int row = 0; row < height; ++row) {
+            scaleXRow(row);
+            data.getDependedVarsY().set(row,
+                    scaleY(
+                            data.getDependedVarsY().get(row)
+                    )
+            );
         }
     }
+
+    public void descaleFeatures() {
+        for (int row = 0; row < height; ++row) {
+            revertScaleXRow(row);
+            data.getDependedVarsY().set(row,
+                    invertScaleY(
+                            data.getDependedVarsY().get(row)
+                    )
+            );
+        }
+
+    }
+
 
     public Double numberScale(int columnIdx, double val) {
         return scaleADouble(columnIdx, val);
@@ -56,14 +58,14 @@ public class DatasetNormalizer {
     private void computeBounds() {
         minY = data.getDependedVarsY().get(0);
         maxY = data.getDependedVarsY().get(0);
-        for (int column = 0;column < width; ++column) {
+        for (int column = 0; column < width; ++column) {
             maxVals.add(data.getFeaturesX().get(0).get(column));
             minVals.add(data.getFeaturesX().get(0).get(column));
         }
-        for (int row = 1; row < height; ++row ) {
-            for (int column = 0;column < width; ++column) {
+        for (int row = 1; row < height; ++row) {
+            for (int column = 0; column < width; ++column) {
                 if (maxVals.get(column) < data.getFeaturesX().get(row).get(column)) {
-                    maxVals.set(column,data.getFeaturesX().get(row).get(column));
+                    maxVals.set(column, data.getFeaturesX().get(row).get(column));
                 }
                 if (minVals.get(column) > data.getFeaturesX().get(row).get(column)) {
                     minVals.set(column, data.getFeaturesX().get(row).get(column));
@@ -114,7 +116,7 @@ public class DatasetNormalizer {
         data.getFeaturesX().get(rowIdx)
                 .set(columnIdx,
                         scaleADouble(columnIdx,
-                                     data.getFeaturesX().get(rowIdx).get(columnIdx)
+                                data.getFeaturesX().get(rowIdx).get(columnIdx)
                         )
                 );
     }
