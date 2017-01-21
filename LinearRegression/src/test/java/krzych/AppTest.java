@@ -54,7 +54,7 @@ public class AppTest
         double avgError = 0;
 
         for (int row = 0; row < data.controlSet.getHeight(); ++row) {
-            Double calculatedY = model.apply(data.controlSet.getFeaturesX().get(row));
+            Double calculatedY = model.applyScaledWith1(data.controlSet.getFeaturesX().get(row));
             Double originalY =  model.getNormalizer().invertScaleY(data.controlSet.getDependedVarsY().get(row));
             log.info("Calculated y :" + calculatedY + " originalY: " + originalY);
             avgError += Math.abs(originalY - calculatedY) / originalY ;
@@ -69,12 +69,12 @@ public class AppTest
     // in this test we want to make sure that if we round the answer to integer,
     // then we will have no errors
     public void testGradientDescentIrisRigorious() throws IOException {
-        int exponent = 3;
+        int exponent = 5;
         log.info("Iris dataset");
         DataSuite data = DataSuite.readFile("src/test/resources/iris.csv", exponent);
 
         GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data.trainingSet, 0.2, 0.00000001);
+        Model model = gd.solve(data.trainingSet, 0.1, 0.00000000001, 20.0);
         model.setNormalizer(data.normalizer);
 
         ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
@@ -85,7 +85,7 @@ public class AppTest
         log.info("Error TS = " + errorTS);
         model.print();
         for (int row = 0; row < 10; ++row) {
-            Double calculatedY = model.apply(data.controlSet.getFeaturesX().get(row));
+            Double calculatedY = model.applyScaledWith1(data.controlSet.getFeaturesX().get(row));
             Double originalY =  model.getNormalizer().invertScaleY(data.controlSet.getDependedVarsY().get(row));
             log.info("Calculated y :" + calculatedY + " originalY: " + originalY);
             assertTrue(Math.abs(calculatedY

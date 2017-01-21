@@ -24,22 +24,23 @@ public class CsvData {
     private ColumnsMapping columnsMapping;
     private int exponent = 1;
 
-
-    public int getHeight() {
-        return featuresX.size();
-    }
-
-    public int getWidth() {
-        if (getHeight() == 0) return 0;
-        return featuresX.get(0).getVector().size();
-    }
-
-    public CsvData() {
+    CsvData() {
         featuresX = new ArrayList<>();
         dependedVarsY = new ArrayList<>();
     }
 
-    public void shuffle() {
+    int getHeight() {
+        return featuresX.size();
+    }
+
+    int getWidth() {
+        if (getHeight() == 0) {
+            return 0;
+        }
+        return featuresX.get(0).size();
+    }
+
+    void shuffle() {
         long seed = 123452;
         Collections.shuffle(featuresX, new Random(seed));
         Collections.shuffle(dependedVarsY, new Random(seed));
@@ -51,35 +52,30 @@ public class CsvData {
         Collections.shuffle(dependedVarsY, new Random(seed));
     }
 
-    public void addOnes() {
-        featuresX.forEach(p -> {
-                    p.add(0,1.0);
-                }
+    void addOnes() {
+        featuresX.forEach(p
+                -> p.add(0,1.0)
         );
     }
 
-    public void print() {
-        featuresX.forEach(p -> {
-            p.print();
-        });
+    void print() {
+        featuresX.forEach(Point::print);
     }
 
     public void printX() {
-        featuresX.forEach( p -> {
-            p.print(columnsMapping);
-            }
+        featuresX.forEach( p ->
+            p.print(columnsMapping)
         );
     }
 
-    public void expand(int exponent) {
-        featuresX.forEach( x ->  {
-            x.expand(exponent);
-            }
+    void expand(int exponent) {
+        featuresX.forEach( x ->
+            x.expand(exponent)
         );
         this.exponent = exponent;
     }
 
-    public static CsvData readFile(String filePath) throws IOException {
+    static CsvData readFile(String filePath) throws IOException {
         ColumnsMapping columnsMapping = new ColumnsMapping();
         CsvData csvData = new CsvData();
         try (BufferedReader br = new BufferedReader(new FileReader(new File(filePath)))) {

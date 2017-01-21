@@ -12,33 +12,52 @@ import java.util.List;
 @Data
 public class Point {
     private static final Logger log = Logger.getLogger(Point.class);
-    private List<Double> vector;
+    private List<Double> v;
+
+    public List<Double> getVector() {
+        return v;
+    }
 
     public Point() {
-        vector = new ArrayList<>();
+        v = new ArrayList<>();
     }
 
     public Double get(int i) {
-        return vector.get(i);
+        return v.get(i);
     }
 
     public void add(Double v) {
-        vector.add(v);
+        this.v.add(v);
     }
 
     public int size() {
-        return vector.size();
+        return v.size();
     }
 
     public void set(int i, Double v) {
-        vector.set(i, v);
+        this.v.set(i, v);
+    }
+
+    public void add(int i, double val) {
+        v.add(i, val);
+    }
+
+    public void expand(int exponent) {
+        int originalSize = v.size();
+        for (int i = 0;i < originalSize;++i) {
+            for (int exp = 2;exp <= exponent;exp++) {
+                v.add(Math.pow(v.get(i),exp));
+            }
+        }
     }
 
     public void print() {
         StringBuilder builder = new StringBuilder();
-        for (Double d: vector
+        for (Double d: v
              ) {
-            builder.append("[ " + d + " ]");
+            builder.append("[ ");
+            builder.append(d);
+            builder.append(" ]");
         }
         log.info(builder.toString());
     }
@@ -46,28 +65,20 @@ public class Point {
     public void print(ColumnsMapping mapping) {
         int column = 0;
         StringBuilder builder = new StringBuilder();
-        for (Double d: vector
+        for (Double d: v
                 ) {
             if (!mapping.isColumnMapped(column)) {
-                builder.append("[ " + d + " ]");
+                builder.append("[ ");
+                builder.append(d);
+                builder.append(" ]");
             } else {
-                builder.append("[ " + mapping.getDSMapping(column, d) + " ]");
+                builder.append("[ ");
+                builder.append(mapping.getDSMapping(column, d));
+                builder.append(" ]");
             }
             column++;
         }
         log.info(builder.toString());
     }
 
-    public void add(int i, double val) {
-        vector.add(i, val);
-    }
-
-    public void expand(int exponent) {
-        int originalSize = vector.size();
-        for (int i = 0;i < originalSize;++i) {
-            for (int exp = 2;exp <= exponent;exp++) {
-                vector.add(Math.pow(vector.get(i),exp));
-            }
-        }
-    }
 }

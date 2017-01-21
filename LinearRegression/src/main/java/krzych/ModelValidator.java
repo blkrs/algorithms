@@ -10,7 +10,7 @@ public class ModelValidator {
 
     private CsvData data;
 
-    public ModelValidator(CsvData data) {
+    ModelValidator(CsvData data) {
         this.data = data;
     }
 

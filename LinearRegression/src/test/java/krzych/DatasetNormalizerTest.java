@@ -42,9 +42,9 @@ public class DatasetNormalizerTest
         squareData.print();
         DatasetNormalizer normalizer = new DatasetNormalizer(squareData);
         normalizer.scalingFeatures();
-
         for ( Point p : squareData.getFeaturesX() ) {
-            for (Double v :p.getVector()) {
+            for (int i = 0;i < p.size(); ++i) {
+                Double v = p.get(i);
                 assertTrue(v >= 0);
                 assertTrue(v <= 1);
             }

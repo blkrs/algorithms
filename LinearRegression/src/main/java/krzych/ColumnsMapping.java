@@ -15,30 +15,29 @@ public class ColumnsMapping {
     private Map<Integer, Map<Double,String>> reverseMappings = new HashMap<>();
     private Map<Integer, Double> columnsMax = new HashMap<>();
 
-    public Double getSDMapping(String e, int columnNo) {
+    Double getSDMapping(String e, int columnNo) {
         if (!isColumnMapped(columnNo)) {
             initRow(columnNo);
         }
         return getOrAddMapping(columnNo, e);
     }
 
-    public String getDSMapping(int columnNo, Double key) {
+    String getDSMapping(int columnNo, Double key) {
         if (isColumnMapped(columnNo)) {
             return reverseMappings.get(columnNo).get(key);
         }
         return null;
     }
 
-    public boolean isColumnMapped(int columnNo) {
+    boolean isColumnMapped(int columnNo) {
         return columnsMax.containsKey(columnNo);
     }
-
 
     private void initRow(int columnNo) {
         log.info("Initialize mapping of row " +  columnNo);
         columnsMax.put(columnNo, 0.0);
-        mappings.put(columnNo, new HashMap<String, Double>());
-        reverseMappings.put(columnNo, new HashMap<Double, String>());
+        mappings.put(columnNo, new HashMap<>());
+        reverseMappings.put(columnNo, new HashMap<>());
     }
 
     private Double getOrAddMapping(int columnNo, String e) {

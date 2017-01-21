@@ -130,10 +130,10 @@ public class DatasetNormalizer {
     }
 
     private void invertScaleCell(int rowIdx, int columnIdx) {
-        data.getFeaturesX().get(rowIdx).getVector()
+        data.getFeaturesX().get(rowIdx)
                 .set(columnIdx,
                         invertScaleADouble(columnIdx,
-                                data.getFeaturesX().get(rowIdx).getVector().get(columnIdx)
+                                data.getFeaturesX().get(rowIdx).get(columnIdx)
                         )
                 );
     }
