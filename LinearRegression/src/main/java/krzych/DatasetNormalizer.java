@@ -56,12 +56,15 @@ public class DatasetNormalizer {
     }
 
     private void computeBounds() {
-        minY = data.getDependedVarsY().get(0);
-        maxY = data.getDependedVarsY().get(0);
-        for (int column = 0; column < width; ++column) {
-            maxVals.add(data.getFeaturesX().get(0).get(column));
-            minVals.add(data.getFeaturesX().get(0).get(column));
-        }
+        initBoundsFromFirstRow();
+        findMinMax();
+        log.info("Min x values: " + minVals.toString());
+        log.info("Max x values: " + maxVals.toString());
+        log.info("Min Y:" + minY);
+        log.info("Max Y:" + maxY);
+    }
+
+    private void findMinMax() {
         for (int row = 1; row < height; ++row) {
             for (int column = 0; column < width; ++column) {
                 if (maxVals.get(column) < data.getFeaturesX().get(row).get(column)) {
@@ -78,10 +81,15 @@ public class DatasetNormalizer {
                 maxY = data.getDependedVarsY().get(row);
             }
         }
-        log.info("Min x values: " + minVals.toString());
-        log.info("Max x values: " + maxVals.toString());
-        log.info("Min Y:" + minY);
-        log.info("Max Y:" + maxY);
+    }
+
+    private void initBoundsFromFirstRow() {
+        minY = data.getDependedVarsY().get(0);
+        maxY = data.getDependedVarsY().get(0);
+        for (int column = 0; column < width; ++column) {
+            maxVals.add(data.getFeaturesX().get(0).get(column));
+            minVals.add(data.getFeaturesX().get(0).get(column));
+        }
     }
 
     Point scaleXVector(Point p) {

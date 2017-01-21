@@ -69,11 +69,12 @@ public class AppTest
     // in this test we want to make sure that if we round the answer to integer,
     // then we will have no errors
     public void testGradientDescentIrisRigorious() throws IOException {
+        int exponent = 3;
         log.info("Iris dataset");
-        DataSuite data = DataSuite.readFile("src/test/resources/iris.csv");
+        DataSuite data = DataSuite.readFile("src/test/resources/iris.csv", exponent);
 
         GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data.trainingSet);
+        Model model = gd.solve(data.trainingSet, 0.2, 0.00000001);
         model.setNormalizer(data.normalizer);
 
         ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
@@ -143,7 +144,8 @@ public class AppTest
 
     public void testGradientDescentSquare() throws IOException {
         log.info("y = x^ 2 dataset");
-        DataSuite data = DataSuite.readFile("src/test/resources/square.csv");
+        int exponent = 3;
+        DataSuite data = DataSuite.readFile("src/test/resources/square.csv", exponent);
 
         GradientDescent gd = new GradientDescent();
         Model model = gd.solve(data.trainingSet);
@@ -159,6 +161,7 @@ public class AppTest
         for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
             Point p = new Point();
             p.add(d);
+            p.expand(exponent);
             log.info("Scoring: " + d + ", result: " + model.apply(p));
         }
         model.print();

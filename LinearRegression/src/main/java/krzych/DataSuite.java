@@ -6,21 +6,28 @@ import java.io.IOException;
  * Created by krzych on 20.01.17.
  */
 public class DataSuite {
-    public CsvData trainingSet;
-    public CsvData controlSet;
-    public DatasetNormalizer normalizer;
+    public final CsvData trainingSet;
+    public final CsvData controlSet;
+    public final DatasetNormalizer normalizer;
+
+    private DataSuite(CsvData trainingSet, CsvData controlSet, DatasetNormalizer normalizer) {
+        this.trainingSet = trainingSet;
+        this.controlSet = controlSet;
+        this.normalizer = normalizer;
+    }
+
+    public static DataSuite readFile(String file, int exponent) throws IOException {
+        CsvData trainingSet = CsvData.readFile(file);
+        trainingSet.expand(exponent);
+        DatasetNormalizer normalizer = new DatasetNormalizer(trainingSet);
+        normalizer.scalingFeatures();
+        trainingSet.shuffle();
+        trainingSet.addOnes();
+        CsvData controlSet = DatasetSplitter.splitWithRatio(trainingSet, 0.2);
+        return new DataSuite(trainingSet, controlSet, normalizer);
+    }
 
     public static DataSuite readFile(String file) throws IOException {
-        DataSuite suite = new DataSuite();
-        suite.trainingSet = CsvData.readFile(file);
-        suite.normalizer = new DatasetNormalizer(suite.trainingSet);
-        suite.normalizer.scalingFeatures();
-        suite.trainingSet.shuffle();
-        suite.trainingSet.addOnes();
-        suite.controlSet = DatasetSplitter.splitWithRatio(suite.trainingSet, 0.2);
-        GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(suite.trainingSet);
-        model.setNormalizer(suite.normalizer);
-        return suite;
+        return readFile(file, 1);
     }
 }

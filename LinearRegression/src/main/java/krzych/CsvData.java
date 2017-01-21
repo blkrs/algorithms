@@ -22,6 +22,7 @@ public class CsvData {
     private List<Point> featuresX;
     private List<Double> dependedVarsY;
     private ColumnsMapping columnsMapping;
+    private int exponent = 1;
 
 
     public int getHeight() {
@@ -51,23 +52,31 @@ public class CsvData {
     }
 
     public void addOnes() {
-        for (Point x: featuresX) {
-            x.add(0,1.0);
-        }
+        featuresX.forEach(p -> {
+                    p.add(0,1.0);
+                }
+        );
     }
 
     public void print() {
-        for (Point p : featuresX
-             ) {
-             p.print();
-        }
+        featuresX.forEach(p -> {
+            p.print();
+        });
     }
 
     public void printX() {
-        for (Point p : featuresX
-                ) {
+        featuresX.forEach( p -> {
             p.print(columnsMapping);
-        }
+            }
+        );
+    }
+
+    public void expand(int exponent) {
+        featuresX.forEach( x ->  {
+            x.expand(exponent);
+            }
+        );
+        this.exponent = exponent;
     }
 
     public static CsvData readFile(String filePath) throws IOException {
@@ -79,7 +88,6 @@ public class CsvData {
             while ((line = br.readLine()) != null) {
                 addRow(csvData, line, columnsMapping);
             }
-
             csvData.setColumnsMapping(columnsMapping);
             return csvData;
         }

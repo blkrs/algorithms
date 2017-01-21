@@ -12,9 +12,7 @@ import java.util.List;
 @Data
 public class Point {
     private static final Logger log = Logger.getLogger(Point.class);
-
     private List<Double> vector;
-
 
     public Point() {
         vector = new ArrayList<>();
@@ -62,5 +60,14 @@ public class Point {
 
     public void add(int i, double val) {
         vector.add(i, val);
+    }
+
+    public void expand(int exponent) {
+        int originalSize = vector.size();
+        for (int i = 0;i < originalSize;++i) {
+            for (int exp = 2;exp <= exponent;exp++) {
+                vector.add(Math.pow(vector.get(i),exp));
+            }
+        }
     }
 }

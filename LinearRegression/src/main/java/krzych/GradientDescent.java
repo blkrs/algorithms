@@ -32,10 +32,19 @@ public class GradientDescent {
         initTheta();
         double cost = 10000000;
         double previousCost;
+        int counter = 0;
         do {
             previousCost = cost;
             cost = costFunction();
             descent();
+            if (counter == 0) {
+                log.info("Cost: " + cost);
+                counter = 10000;
+            }
+            counter--;
+            if (previousCost < cost) {
+                log.warn("XXXXXXXXXXXXXXXXXXXXXXXX Previous cost is lower, gradient is ascending");
+            }
         } while (previousCost - cost > costFunctionThreshold);
         return getModel();
     }
