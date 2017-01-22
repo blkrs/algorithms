@@ -167,4 +167,29 @@ public class AppTest
         model.print();
     }
 
+    public void testGradientDescentSquareNegative() throws IOException {
+        log.info("y = - x^2 dataset");
+        int exponent = 2;
+        DataSuite data = DataSuite.readFile("src/test/resources/squarenegative.csv", exponent);
+
+        GradientDescent gd = new GradientDescent();
+        Model model = gd.solve(data.trainingSet, 0.1, 0.00000000001, 0.001);
+        model.setNormalizer(data.normalizer);
+
+        ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
+        ModelValidator controlSetValidator = new ModelValidator(data.controlSet);
+        Double errorCS = trainingSetValidator.validateSet(model);
+        Double errorTS = controlSetValidator.validateSet(model);
+
+        log.info("Error CS = " + errorCS);
+        log.info("Error TS = " + errorTS);
+        for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
+            Point p = new Point();
+            p.add(d);
+            p.expand(exponent);
+            log.info("Scoring: " + d + ", result: " + model.apply(p));
+        }
+        model.print();
+    }
+
 }

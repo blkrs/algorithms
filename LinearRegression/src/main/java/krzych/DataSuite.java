@@ -17,7 +17,7 @@ public class DataSuite {
     }
 
     public static DataSuite readFile(String file, int exponent) throws IOException {
-        CsvData trainingSet = CsvData.readFile(file);
+        CsvData trainingSet = CsvDataFactory.readFile(file);
         trainingSet.expand(exponent);
         DatasetNormalizer normalizer = new DatasetNormalizer(trainingSet);
         normalizer.scalingFeatures();

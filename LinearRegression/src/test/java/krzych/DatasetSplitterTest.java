@@ -38,7 +38,7 @@ public class DatasetSplitterTest
      * Rigourous Test :-)
      */
     public void testSplitInHalf() throws IOException {
-        CsvData originalData = CsvData.readFile("src/test/resources/linearyeqx.csv");
+        CsvData originalData = CsvDataFactory.readFile("src/test/resources/linearyeqx.csv");
         log.info("Original dataset size before split: "  + originalData.getFeaturesX().size());
         CsvData secondHalf = DatasetSplitter.splitWithRatio(originalData,0.5);
         log.info("Original dataset size after split: "  + originalData.getFeaturesX().size());
@@ -47,7 +47,7 @@ public class DatasetSplitterTest
     }
 
     public void testSplitInRightProportion() throws IOException {
-        CsvData originalData = CsvData.readFile("src/test/resources/iris.csv");
+        CsvData originalData = CsvDataFactory.readFile("src/test/resources/iris.csv");
         log.info("Original dataset size before split: "  +originalData.getFeaturesX().size());
         double ratio = 0.2;
         CsvData secondPart = DatasetSplitter.splitWithRatio(originalData, ratio);
@@ -59,7 +59,7 @@ public class DatasetSplitterTest
     }
 
     public void testSplitHasEqualWidth() throws IOException {
-        CsvData originalData = CsvData.readFile("src/test/resources/iris.csv");
+        CsvData originalData = CsvDataFactory.readFile("src/test/resources/iris.csv");
         log.info("Original dataset size before split: "  + originalData.getFeaturesX().size());
         double ratio = 0.2;
         CsvData secondPart = DatasetSplitter.splitWithRatio(originalData, ratio);

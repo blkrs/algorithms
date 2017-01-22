@@ -9,14 +9,9 @@ import java.util.List;
 /**
  * Created by krzych on 28.12.16.
  */
-@Data
 public class Point {
     private static final Logger log = Logger.getLogger(Point.class);
     private List<Double> v;
-
-    public List<Double> getVector() {
-        return v;
-    }
 
     public Point() {
         v = new ArrayList<>();
@@ -49,6 +44,10 @@ public class Point {
                 v.add(Math.pow(v.get(i),exp));
             }
         }
+    }
+
+    public String toString() {
+        return v.toString();
     }
 
     public void print() {

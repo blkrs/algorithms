@@ -38,7 +38,7 @@ public class DatasetNormalizerTest
      * Rigourous Test :-)
      */
     public void testIfNormalizedDatainRange01() throws IOException {
-        CsvData squareData = CsvData.readFile("src/test/resources/square.csv");
+        CsvData squareData = CsvDataFactory.readFile("src/test/resources/square.csv");
         squareData.print();
         DatasetNormalizer normalizer = new DatasetNormalizer(squareData);
         normalizer.scalingFeatures();
@@ -52,7 +52,7 @@ public class DatasetNormalizerTest
     }
 
     public void testScaleAndScaleBack() throws IOException {
-        CsvData squareData = CsvData.readFile("src/test/resources/square.csv");
+        CsvData squareData = CsvDataFactory.readFile("src/test/resources/square.csv");
         DatasetNormalizer normalizer = new DatasetNormalizer(squareData);
 
 
