@@ -27,6 +27,10 @@ public class ModelValidator {
             Double descaledOriginalY = model.getNormalizer().invertScaleY(originalY);
             log.info("Descaled SCoredY " + scoredY+ " descaled Original Y " + descaledOriginalY);
             Double diff = scoredY - descaledOriginalY;
+            if (descaledOriginalY == 0) {
+                // skip undeterimned error value
+                continue;
+            }
             Double error = Math.abs (diff/ descaledOriginalY);
             if (error > maxError)
                 maxError = error;

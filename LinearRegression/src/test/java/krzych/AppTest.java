@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class AppTest
     extends TestCase
 {
-    final static Logger log = Logger.getLogger(AppTest.class);
+    private final static Logger log = Logger.getLogger(AppTest.class);
     /**
      * Create the test case
      *
@@ -38,8 +38,8 @@ public class AppTest
     public void testGradientDescentIris() throws IOException {
         log.info("Iris dataset");
         DataSuite data = DataSuite.readFile("src/test/resources/iris.csv");
-
-        GradientDescent gd = new GradientDescent();
+        GradientDescentBuilder builder = new GradientDescentBuilder();
+        GradientDescent gd = builder.build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
 
@@ -72,9 +72,13 @@ public class AppTest
         int exponent = 5;
         log.info("Iris dataset");
         DataSuite data = DataSuite.readFile("src/test/resources/iris.csv", exponent);
+        GradientDescentBuilder builder = new GradientDescentBuilder();
 
-        GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data.trainingSet, 0.1, 0.00000000001, 20.0);
+        GradientDescent gd = builder.setAlpha(0.1)
+                                    .setLambda(20.0)
+                                    .setThreshold(0.00000000001)
+                            .build();
+        Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
 
         ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
@@ -96,8 +100,7 @@ public class AppTest
     public void testGradientDecentLinear() throws IOException {
         log.info("y = x dataset");
         DataSuite data = DataSuite.readFile("src/test/resources/linearyeqx.csv");
-
-        GradientDescent gd = new GradientDescent();
+        GradientDescent gd = new GradientDescentBuilder().setThreshold(0.00000000001).build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
         ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
@@ -120,8 +123,7 @@ public class AppTest
     public void testGradientDecentLinearYeqXMinus20() throws IOException {
         log.info("y = x dataset");
         DataSuite data = DataSuite.readFile("src/test/resources/linearyeqxminus20.csv");
-
-        GradientDescent gd = new GradientDescent();
+        GradientDescent gd = new GradientDescentBuilder().build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
 
@@ -146,8 +148,7 @@ public class AppTest
         log.info("y = x^ 2 dataset");
         int exponent = 3;
         DataSuite data = DataSuite.readFile("src/test/resources/square.csv", exponent);
-
-        GradientDescent gd = new GradientDescent();
+        GradientDescent gd = new GradientDescentBuilder().build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
 
@@ -172,8 +173,8 @@ public class AppTest
         int exponent = 2;
         DataSuite data = DataSuite.readFile("src/test/resources/squarenegative.csv", exponent);
 
-        GradientDescent gd = new GradientDescent();
-        Model model = gd.solve(data.trainingSet, 0.1, 0.00000000001, 0.001);
+        GradientDescent gd = new GradientDescentBuilder().setAlpha(0.3).setThreshold(0.0000000000001).setLambda(0.001).build();
+        Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
 
         ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
@@ -183,6 +184,8 @@ public class AppTest
 
         log.info("Error CS = " + errorCS);
         log.info("Error TS = " + errorTS);
+        assertTrue(errorCS < 0.4);
+        assertTrue(errorTS < 0.4);
         for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
             Point p = new Point();
             p.add(d);

@@ -13,7 +13,7 @@ public class Point {
     private static final Logger log = Logger.getLogger(Point.class);
     private List<Double> v;
 
-    public Point() {
+    Point() {
         v = new ArrayList<>();
     }
 
@@ -21,23 +21,23 @@ public class Point {
         return v.get(i);
     }
 
-    public void add(Double v) {
+    void add(Double v) {
         this.v.add(v);
     }
 
-    public int size() {
+    int size() {
         return v.size();
     }
 
-    public void set(int i, Double v) {
+    void set(int i, Double v) {
         this.v.set(i, v);
     }
 
-    public void add(int i, double val) {
+    void add(int i, double val) {
         v.add(i, val);
     }
 
-    public void expand(int exponent) {
+    void expand(int exponent) {
         int originalSize = v.size();
         for (int i = 0;i < originalSize;++i) {
             for (int exp = 2;exp <= exponent;exp++) {
@@ -46,11 +46,12 @@ public class Point {
         }
     }
 
+    @Override
     public String toString() {
         return v.toString();
     }
 
-    public void print() {
+    void print() {
         StringBuilder builder = new StringBuilder();
         for (Double d: v
              ) {
@@ -61,7 +62,7 @@ public class Point {
         log.info(builder.toString());
     }
 
-    public void print(ColumnsMapping mapping) {
+    void printWithMapping(ColumnsMapping mapping) {
         int column = 0;
         StringBuilder builder = new StringBuilder();
         for (Double d: v

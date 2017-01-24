@@ -9,7 +9,6 @@ public class GradientDescent {
 
     private static final Logger log = Logger.getLogger(GradientDescent.class);
     protected double costFunctionThreshold = 0.0000000001;
-
     private Double alpha = 0.1;
     private Double lambda = 0.0;
     private Model theta;
@@ -17,12 +16,11 @@ public class GradientDescent {
 
     private CsvData data;
 
-    public Model solve(CsvData data, Double alpha, Double costFunctionThreshold, Double lambda) {
-        this.data = data;
+
+    public GradientDescent(Double alpha, Double lambda, Double gradientThreshold) {
         this.alpha = alpha;
-        this.costFunctionThreshold = costFunctionThreshold;
+        this.costFunctionThreshold = gradientThreshold;
         this.lambda = lambda;
-        return solve(data);
     }
 
     public Model solve(CsvData data) {

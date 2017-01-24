@@ -3,10 +3,6 @@ package krzych;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +60,7 @@ public class CsvData {
 
     public void printX() {
         featuresX.forEach( p ->
-            p.print(columnsMapping)
+            p.printWithMapping(columnsMapping)
         );
     }
 
