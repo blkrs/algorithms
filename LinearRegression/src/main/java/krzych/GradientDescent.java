@@ -2,20 +2,21 @@ package krzych;
 
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by krzych on 28.12.16.
  */
 public class GradientDescent {
 
     private static final Logger log = Logger.getLogger(GradientDescent.class);
-    protected double costFunctionThreshold = 0.0000000001;
+    private double costFunctionThreshold = 0.0000000001;
     private Double alpha = 0.1;
     private Double lambda = 0.0;
     private Model theta;
 
-
-    private CsvData data;
-
+    private DataSet data;
 
     public GradientDescent(Double alpha, Double lambda, Double gradientThreshold) {
         this.alpha = alpha;
@@ -23,11 +24,10 @@ public class GradientDescent {
         this.lambda = lambda;
     }
 
-    public Model solve(CsvData data) {
+    public Model solve(DataSet data) {
         this.data = data;
         return gradientDescent();
     }
-
 
     private Model gradientDescent() {
         initTheta();
@@ -50,8 +50,9 @@ public class GradientDescent {
     }
 
     private void descent() {
+        List<Double> derivatives = data.computePartialDerivatives(theta);
         for (int column = 0; column < theta.getTheta().size(); ++column) {
-            Double derivative = computePartialDerivative(column);
+            Double derivative = derivatives.get(column);
             Double regularization = 0.0;
             if (column > 0)  {
                 regularization = computeRegularization(column);
@@ -61,25 +62,12 @@ public class GradientDescent {
     }
 
     private Double computeRegularization(int column) {
-        return lambda * theta.getTheta().get(column) / data.getFeaturesX().size();
+        return lambda * theta.getTheta().get(column) / data.getHeight();
     }
 
-    private Double computePartialDerivative(int column) {
-        Double temp = 0.0;
-        for (int row = 0; row < data.getFeaturesX().size(); ++row) {
-            temp += (multiply(data.getFeaturesX().get(row), theta) - data.getDependedVarsY().get(row))
-                    * data.getFeaturesX().get(row).get(column) / data.getFeaturesX().size();
-        }
-        return temp;
-    }
 
     private Double costFunction() {
-        Double totalCost = 0.0;
-        for (int row = 0; row < data.getFeaturesX().size(); ++row) {
-            totalCost += Math.pow(multiply(data.getFeaturesX().get(row), theta)
-                    - data.getDependedVarsY().get(row),2)/data.getFeaturesX().size();
-        }
-        totalCost /= 2;
+        Double totalCost = data.costFunction(theta);
         if (lambda != 0) {
             totalCost += regularizationParameter();
         }
@@ -94,26 +82,16 @@ public class GradientDescent {
         return lambda*value;
     }
 
-    private Double multiply(Point p, Model theta) {
-        Double t = 0.0;
-        for (int i = 0; i < theta.getTheta().size(); ++i) {
-            t+= theta.getTheta().get(i) * p.get(i);
-        }
-        return t;
-    }
-
-
     private Model getModel() {
         return theta;
     }
 
     private void initTheta() {
-        int features = data.getFeaturesX().get(0).size();
+        int features = data.getWidth();
         theta = new Model();
         for (int i = 0;i < features;++i) {
             theta.getTheta().add(0.0);
         }
     }
-
 
 }

@@ -31,7 +31,7 @@ public class AppTest
     public static Test suite()  {
         TestSuite allTests =  new TestSuite( AppTest.class );
         allTests.addTest(DatasetNormalizerTest.suite());
-        allTests.addTest(DatasetSplitterTest.suite());
+        allTests.addTest(MemoryDatasetSplitterTest.suite());
         return allTests;
     }
 
@@ -54,8 +54,8 @@ public class AppTest
         double avgError = 0;
 
         for (int row = 0; row < data.controlSet.getHeight(); ++row) {
-            Double calculatedY = model.applyScaledWith1(data.controlSet.getFeaturesX().get(row));
-            Double originalY =  model.getNormalizer().invertScaleY(data.controlSet.getDependedVarsY().get(row));
+            Double calculatedY = data.controlSet.scoreRow(model, row);
+            Double originalY =  model.getNormalizer().invertScaleY(data.controlSet.getY(row));
             log.info("Calculated y :" + calculatedY + " originalY: " + originalY);
             avgError += Math.abs(originalY - calculatedY) / originalY ;
             assertTrue(Math.abs(calculatedY
@@ -89,8 +89,8 @@ public class AppTest
         log.info("Error TS = " + errorTS);
         model.print();
         for (int row = 0; row < 10; ++row) {
-            Double calculatedY = model.applyScaledWith1(data.controlSet.getFeaturesX().get(row));
-            Double originalY =  model.getNormalizer().invertScaleY(data.controlSet.getDependedVarsY().get(row));
+            Double calculatedY = data.controlSet.scoreRow(model, row);
+            Double originalY =  model.getNormalizer().invertScaleY(data.controlSet.getY(row));
             log.info("Calculated y :" + calculatedY + " originalY: " + originalY);
             assertTrue(Math.abs(calculatedY
                     - originalY) < 0.5);

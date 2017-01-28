@@ -14,9 +14,9 @@ public class DatasetNormalizer {
     private int width;
     private int height;
 
-    private CsvData data;
+    private InMemoryListDataSet data;
 
-    public DatasetNormalizer(CsvData dataset) {
+    public DatasetNormalizer(InMemoryListDataSet dataset) {
         data = dataset;
         width = data.getFeaturesX().get(0).size();
         height = data.getFeaturesX().size();
@@ -43,7 +43,6 @@ public class DatasetNormalizer {
                     )
             );
         }
-
     }
 
 

@@ -8,31 +8,34 @@ import java.io.IOException;
 /**
  * Created by krzych on 22.01.17.
  */
-public class CsvDataFactory {
+public class DataSetFactory {
 
-    static CsvData readFile(String filePath) throws IOException {
+    private DataSetFactory() {
+    }
+
+    static InMemoryListDataSet readFile(String filePath) throws IOException {
         ColumnsMapping columnsMapping = new ColumnsMapping();
-        CsvData csvData = new CsvData();
+        InMemoryListDataSet dataSet = new InMemoryListDataSet();
         try (BufferedReader br = new BufferedReader(new FileReader(new File(filePath)))) {
             String line;
 
             while ((line = br.readLine()) != null) {
-                addRow(csvData, line, columnsMapping);
+                addRow(dataSet, line, columnsMapping);
             }
-            csvData.setColumnsMapping(columnsMapping);
-            return csvData;
+            dataSet.setColumnsMapping(columnsMapping);
+            return dataSet;
         }
     }
 
-    private static void addRow(CsvData csvData, String line, ColumnsMapping columnsMapping) {
+    private static void addRow(InMemoryListDataSet dataSet, String line, ColumnsMapping columnsMapping) {
         String[] entries = line.split(",");
         Point p = new Point();
         int yIndex = entries.length - 1;
         for (int columnNo = 0; columnNo < yIndex; ++columnNo) {
             p.add(getaDouble(entries, columnNo, columnsMapping));
         }
-        csvData.getFeaturesX().add(p);
-        csvData.getDependedVarsY().add(getaDouble(entries, yIndex, columnsMapping));
+        dataSet.getFeaturesX().add(p);
+        dataSet.getDependedVarsY().add(getaDouble(entries, yIndex, columnsMapping));
     }
 
     private static Double getaDouble(String[] entries,int columnNo, ColumnsMapping columnsMapping) {

@@ -6,21 +6,20 @@ import junit.framework.TestSuite;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Unit test for simple App.
  */
-public class DatasetSplitterTest
+public class MemoryDatasetSplitterTest
     extends TestCase
 {
-    final static Logger log = Logger.getLogger(DatasetSplitterTest.class);
+    final static Logger log = Logger.getLogger(MemoryDatasetSplitterTest.class);
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public DatasetSplitterTest(String testName )
+    public MemoryDatasetSplitterTest(String testName )
     {
         super( testName );
     }
@@ -30,7 +29,7 @@ public class DatasetSplitterTest
      */
     public static Test suite()
     {
-        TestSuite allTests =  new TestSuite( DatasetSplitterTest.class );
+        TestSuite allTests =  new TestSuite( MemoryDatasetSplitterTest.class );
         return allTests;
     }
 
@@ -38,19 +37,19 @@ public class DatasetSplitterTest
      * Rigourous Test :-)
      */
     public void testSplitInHalf() throws IOException {
-        CsvData originalData = CsvDataFactory.readFile("src/test/resources/linearyeqx.csv");
+        InMemoryListDataSet originalData = DataSetFactory.readFile("src/test/resources/linearyeqx.csv");
         log.info("Original dataset size before split: "  + originalData.getFeaturesX().size());
-        CsvData secondHalf = DatasetSplitter.splitWithRatio(originalData,0.5);
+        InMemoryListDataSet secondHalf = MemoryDatasetSplitter.splitWithRatio(originalData,0.5);
         log.info("Original dataset size after split: "  + originalData.getFeaturesX().size());
         log.info("Created dataset size after split: "  + secondHalf.getFeaturesX().size());
         assertTrue(originalData.getFeaturesX().size() - secondHalf.getFeaturesX().size() <= 1);
     }
 
     public void testSplitInRightProportion() throws IOException {
-        CsvData originalData = CsvDataFactory.readFile("src/test/resources/iris.csv");
+        InMemoryListDataSet originalData = DataSetFactory.readFile("src/test/resources/iris.csv");
         log.info("Original dataset size before split: "  +originalData.getFeaturesX().size());
         double ratio = 0.2;
-        CsvData secondPart = DatasetSplitter.splitWithRatio(originalData, ratio);
+        InMemoryListDataSet secondPart = MemoryDatasetSplitter.splitWithRatio(originalData, ratio);
         log.info("Original dataset size after split: "  +originalData.getFeaturesX().size());
         log.info("Created dataset size after split: "  +secondPart.getFeaturesX().size());
         double howManyTimesIsFirstPartBigger = (1 - ratio) / ratio;
@@ -59,10 +58,10 @@ public class DatasetSplitterTest
     }
 
     public void testSplitHasEqualWidth() throws IOException {
-        CsvData originalData = CsvDataFactory.readFile("src/test/resources/iris.csv");
+        InMemoryListDataSet originalData = DataSetFactory.readFile("src/test/resources/iris.csv");
         log.info("Original dataset size before split: "  + originalData.getFeaturesX().size());
         double ratio = 0.2;
-        CsvData secondPart = DatasetSplitter.splitWithRatio(originalData, ratio);
+        InMemoryListDataSet secondPart = MemoryDatasetSplitter.splitWithRatio(originalData, ratio);
         log.info("Original dataset size after split: "  + originalData.getFeaturesX().size());
         log.info("Created dataset size after split: "  + secondPart.getFeaturesX().size());
         assertEquals(originalData.getFeaturesX().get(0).size(), secondPart.getFeaturesX().get(0).size());

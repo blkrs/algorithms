@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 public class ModelValidator {
     private static final Logger log = Logger.getLogger(GradientDescent.class);
 
-    private CsvData data;
+    private DataSet data;
 
-    ModelValidator(CsvData data) {
+    ModelValidator(DataSet data) {
         this.data = data;
     }
 
@@ -22,8 +22,8 @@ public class ModelValidator {
     private Double validateRange(Model model, int start, int end) {
         Double maxError = 0.0;
         for (int row = start; row < end; ++row) {
-            Double scoredY = model.applyScaledWith1(data.getFeaturesX().get(row));
-            Double originalY = data.getDependedVarsY().get(row);
+            Double scoredY = data.scoreRow(model, row);
+            Double originalY = data.getY(row);
             Double descaledOriginalY = model.getNormalizer().invertScaleY(originalY);
             log.info("Descaled SCoredY " + scoredY+ " descaled Original Y " + descaledOriginalY);
             Double diff = scoredY - descaledOriginalY;
