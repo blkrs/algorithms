@@ -197,4 +197,67 @@ public class AppTest
         model.print();
     }
 
+    public void testGradientDescentClass() throws IOException {
+        log.info("y = 1 for x >= 4");
+        int exponent = 1;
+        DataSuite data = DataSuite.readFile("src/test/resources/simpleclass.csv", exponent);
+
+        GradientDescent gd = new GradientDescentBuilder()
+                                    .setAlpha(0.3)
+                                    .setThreshold(0.0000000000001)
+                                    .setLambda(20.0)
+                            .build();
+        Model model = gd.solve(data.trainingSet);
+        model.setNormalizer(data.normalizer);
+
+        ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
+        ModelValidator controlSetValidator = new ModelValidator(data.controlSet);
+        Double errorCS = trainingSetValidator.validateSet(model);
+        Double errorTS = controlSetValidator.validateSet(model);
+
+        log.info("Error CS = " + errorCS);
+        log.info("Error TS = " + errorTS);
+     //   assertTrue(errorCS < 0.4);
+     //   assertTrue(errorTS < 0.4);
+        for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
+            Point p = new Point();
+            p.add(d);
+            p.expand(exponent);
+            log.info("Scoring: " + d + ", result: " + model.apply(p));
+        }
+        model.print();
+    }
+
+    public void testGradientDescentCircle() throws IOException {
+        log.info("circle");
+        int exponent = 1;
+        DataSuite data = DataSuite.readFile("src/test/resources/circle.csv", exponent);
+
+        GradientDescent gd = new GradientDescentBuilder()
+                .setAlpha(0.3)
+                .setThreshold(0.0000000000001)
+                .setLambda(20.0)
+                .build();
+        Model model = gd.solve(data.trainingSet);
+        model.setNormalizer(data.normalizer);
+
+        ModelValidator trainingSetValidator = new ModelValidator(data.trainingSet);
+        ModelValidator controlSetValidator = new ModelValidator(data.controlSet);
+        Double errorCS = trainingSetValidator.validateSet(model);
+        Double errorTS = controlSetValidator.validateSet(model);
+
+        log.info("Error CS = " + errorCS);
+        log.info("Error TS = " + errorTS);
+        //   assertTrue(errorCS < 0.4);
+        //   assertTrue(errorTS < 0.4);
+        for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
+            Point p = new Point();
+            p.add(d);
+            p.add(d);
+            p.expand(exponent);
+            log.info("Scoring: " + d + ", result: " + model.apply(p));
+        }
+        model.print();
+    }
+
 }

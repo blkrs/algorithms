@@ -2,6 +2,7 @@ package krzych.inmemorydata;
 
 import krzych.ColumnsMapping;
 import krzych.DataSet;
+import krzych.learningstrategy.LearningStrategy;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
@@ -41,13 +42,17 @@ public class InMemoryListDataSet implements DataSet {
     }
 
     @Override
-    public List<Double> computePartialDerivatives(final Model theta) {
+    public List<Double> computePartialDerivatives(final Model theta, LearningStrategy learningStrategy) {
         List<Double> derivatives = new ArrayList<>();
         for (int column = 0; column < getWidth(); ++column) {
             Double drv = 0.0;
             for (int row = 0; row < getHeight(); ++row) {
-                drv += (multiply(featuresX.get(row), theta) - dependedVarsY.get(row))
-                        * featuresX.get(row).get(column) / featuresX.size();
+                drv += (learningStrategy.derivative(featuresX.get(row),
+                                                    dependedVarsY.get(row),
+                                                    theta))
+                                                * featuresX.get(row).get(column)
+                        / featuresX.size();
+
             }
             derivatives.add(drv);
         }
@@ -55,11 +60,13 @@ public class InMemoryListDataSet implements DataSet {
     }
 
     @Override
-    public Double costFunction(final Model theta) {
+    public Double costFunction(final Model theta, LearningStrategy learningStrategy) {
         Double totalCost = 0.0;
         for (int row = 0; row < getHeight(); ++row)  {
-            totalCost += Math.pow(multiply(featuresX.get(row), theta)
-                    - dependedVarsY.get(row), 2) / featuresX.size();
+            totalCost += learningStrategy.cost(
+                         featuresX.get(row),
+                         dependedVarsY.get(row), theta)
+                        / featuresX.size();
         }
         totalCost /= 2;
         return totalCost;
@@ -96,7 +103,7 @@ public class InMemoryListDataSet implements DataSet {
                 -> p.add(0, 1.0)
         );
     }
-    
+
     public void print() {
         featuresX.forEach(Point::print);
     }
@@ -107,12 +114,6 @@ public class InMemoryListDataSet implements DataSet {
         );
     }
 
-    private Double multiply(Point p, Model theta) {
-        Double t = 0.0;
-        for (int i = 0; i < theta.getTheta().size(); ++i) {
-            t += theta.getTheta().get(i) * p.get(i);
-        }
-        return t;
-    }
+
 
 }

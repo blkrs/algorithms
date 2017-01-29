@@ -1,6 +1,7 @@
 package krzych;
 
 import krzych.inmemorydata.Model;
+import krzych.learningstrategy.LearningStrategy;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -11,17 +12,20 @@ import java.util.List;
 public class GradientDescent {
 
     private static final Logger log = Logger.getLogger(GradientDescent.class);
-    private double costFunctionThreshold = 0.0000000001;
-    private Double alpha = 0.1;
-    private Double lambda = 0.0;
+    private final double costFunctionThreshold;
+    private final Double alpha;
+    private final Double lambda;
+    private final LearningStrategy learningStrategy;
+
     private Model theta;
 
     private DataSet data;
 
-    public GradientDescent(Double alpha, Double lambda, Double gradientThreshold) {
+    public GradientDescent(Double alpha, Double lambda, Double gradientThreshold, LearningStrategy learningStrategy) {
         this.alpha = alpha;
         this.costFunctionThreshold = gradientThreshold;
         this.lambda = lambda;
+        this.learningStrategy = learningStrategy;
     }
 
     public Model solve(DataSet data) {
@@ -50,7 +54,7 @@ public class GradientDescent {
     }
 
     private void descent() {
-        List<Double> derivatives = data.computePartialDerivatives(theta);
+        List<Double> derivatives = data.computePartialDerivatives(theta,learningStrategy);
         for (int column = 0; column < theta.getTheta().size(); ++column) {
             Double derivative = derivatives.get(column);
             Double regularization = 0.0;
@@ -67,7 +71,7 @@ public class GradientDescent {
 
 
     private Double costFunction() {
-        Double totalCost = data.costFunction(theta);
+        Double totalCost = data.costFunction(theta, learningStrategy);
         if (lambda != 0) {
             totalCost += regularizationParameter();
         }
