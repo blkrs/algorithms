@@ -1,5 +1,7 @@
 package krzych;
 
+import krzych.inmemorydata.Model;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,9 @@ public interface DataSet {
 
     List<Double> computePartialDerivatives(final Model theta);
     Double costFunction(final Model theta);
-    Double scoreRow(final Model theta,int row);
+    Double scoreRow(final Model theta, int row);
     Double getY(int row);
+
+    void shuffle();
+    void addOnes();
 }

@@ -15,21 +15,21 @@ public class ColumnsMapping {
     private Map<Integer, Map<Double,String>> reverseMappings = new HashMap<>();
     private Map<Integer, Double> columnsMax = new HashMap<>();
 
-    Double getSDMapping(String e, int columnNo) {
+    public Double getSDMapping(String e, int columnNo) {
         if (!isColumnMapped(columnNo)) {
             initRow(columnNo);
         }
         return getOrAddMapping(columnNo, e);
     }
 
-    String getDSMapping(int columnNo, Double key) {
+    public String getDSMapping(int columnNo, Double key) {
         if (isColumnMapped(columnNo)) {
             return reverseMappings.get(columnNo).get(key);
         }
         return null;
     }
 
-    boolean isColumnMapped(int columnNo) {
+    public boolean isColumnMapped(int columnNo) {
         return columnsMax.containsKey(columnNo);
     }
 

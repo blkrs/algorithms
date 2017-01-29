@@ -1,4 +1,4 @@
-package krzych;
+package krzych.inmemorydata;
 
 import org.apache.log4j.Logger;
 
@@ -98,11 +98,11 @@ public class DatasetNormalizer {
         return p;
     }
 
-    double invertScaleY(Double y) {
+    public double invertScaleY(Double y) {
         return (y * (maxY - minY)) + minY;
     }
 
-    private double scaleY(Double y) {
+    public double scaleY(Double y) {
         return (y - minY) / (maxY - minY);
     }
 

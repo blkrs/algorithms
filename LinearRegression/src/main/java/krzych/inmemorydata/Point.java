@@ -1,6 +1,6 @@
-package krzych;
+package krzych.inmemorydata;
 
-import lombok.Data;
+import krzych.ColumnsMapping;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class Point {
     private static final Logger log = Logger.getLogger(Point.class);
     private List<Double> v;
 
-    Point() {
+    public Point() {
         v = new ArrayList<>();
     }
 
@@ -21,23 +21,23 @@ public class Point {
         return v.get(i);
     }
 
-    void add(Double v) {
+    public void add(Double v) {
         this.v.add(v);
     }
 
-    int size() {
+    public int size() {
         return v.size();
     }
 
-    void set(int i, Double v) {
+    public void set(int i, Double v) {
         this.v.set(i, v);
     }
 
-    void add(int i, double val) {
+    public void add(int i, double val) {
         v.add(i, val);
     }
 
-    void expand(int exponent) {
+    public void expand(int exponent) {
         int originalSize = v.size();
         for (int i = 0;i < originalSize;++i) {
             for (int exp = 2;exp <= exponent;exp++) {
@@ -51,7 +51,7 @@ public class Point {
         return v.toString();
     }
 
-    void print() {
+    public void print() {
         StringBuilder builder = new StringBuilder();
         for (Double d: v
              ) {
@@ -62,7 +62,7 @@ public class Point {
         log.info(builder.toString());
     }
 
-    void printWithMapping(ColumnsMapping mapping) {
+    public void printWithMapping(ColumnsMapping mapping) {
         int column = 0;
         StringBuilder builder = new StringBuilder();
         for (Double d: v

@@ -1,4 +1,4 @@
-package krzych;
+package krzych.inmemorydata;
 
 import org.apache.log4j.Logger;
 

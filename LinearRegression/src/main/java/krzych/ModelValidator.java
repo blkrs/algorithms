@@ -1,5 +1,6 @@
 package krzych;
 
+import krzych.inmemorydata.Model;
 import org.apache.log4j.Logger;
 
 /**

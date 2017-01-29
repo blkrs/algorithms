@@ -1,5 +1,8 @@
 package krzych;
 
+import krzych.inmemorydata.InMemoryListDataSet;
+import krzych.inmemorydata.Point;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

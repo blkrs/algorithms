@@ -1,5 +1,7 @@
-package krzych;
+package krzych.inmemorydata;
 
+import krzych.ColumnsMapping;
+import krzych.DataSet;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
@@ -20,7 +22,7 @@ public class InMemoryListDataSet implements DataSet {
     private ColumnsMapping columnsMapping;
     private int exponent = 1;
 
-    InMemoryListDataSet() {
+    public InMemoryListDataSet() {
         featuresX = new ArrayList<>();
         dependedVarsY = new ArrayList<>();
     }
@@ -64,7 +66,7 @@ public class InMemoryListDataSet implements DataSet {
     }
 
     @Override
-    public Double scoreRow(Model theta, int row) {
+    public Double scoreRow(final Model theta,final int row) {
         return theta.applyScaledWith1(featuresX.get(row));
     }
 
@@ -73,14 +75,9 @@ public class InMemoryListDataSet implements DataSet {
         return dependedVarsY.get(row);
     }
 
-    void shuffle() {
+    @Override
+    public void shuffle() {
         long seed = 123452;
-        Collections.shuffle(featuresX, new Random(seed));
-        Collections.shuffle(dependedVarsY, new Random(seed));
-    }
-
-    public void shuffleRandom() {
-        long seed = System.nanoTime();
         Collections.shuffle(featuresX, new Random(seed));
         Collections.shuffle(dependedVarsY, new Random(seed));
     }
@@ -93,13 +90,14 @@ public class InMemoryListDataSet implements DataSet {
         this.exponent = exponent;
     }
 
-    void addOnes() {
+    @Override
+    public void addOnes() {
         featuresX.forEach(p
                 -> p.add(0, 1.0)
         );
     }
-
-    void print() {
+    
+    public void print() {
         featuresX.forEach(Point::print);
     }
 

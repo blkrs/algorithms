@@ -1,4 +1,4 @@
-package krzych;
+package krzych.inmemorydata;
 
 import lombok.Data;
 import org.apache.log4j.Logger;
@@ -19,17 +19,21 @@ public class Model {
         theta = new Point();
     }
 
-    Double apply(Point p) {
+    public Double apply(Point p) {
         normalizer.scaleXVector(p);
         return applyScaled(p);
     }
 
-    Double applyScaledWith1(Point p) {
+    public Double applyScaledWith1(Point p) {
         Double t = 0.0;
         for (int i = 0; i < theta.size(); ++i) {
             t+= theta.get(i) * p.get(i);
         }
         return normalizer.invertScaleY(t);
+    }
+
+    public void print() {
+        log.info(this.toString());
     }
 
     private Double applyScaled(Point p) {
@@ -41,7 +45,5 @@ public class Model {
         return normalizer.invertScaleY(t);
     }
 
-    void print() {
-        log.info(this.toString());
-    }
+
 }

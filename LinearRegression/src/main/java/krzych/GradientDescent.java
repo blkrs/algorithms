@@ -1,8 +1,8 @@
 package krzych;
 
+import krzych.inmemorydata.Model;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

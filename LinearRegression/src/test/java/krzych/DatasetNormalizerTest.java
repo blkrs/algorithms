@@ -3,6 +3,9 @@ package krzych;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import krzych.inmemorydata.DatasetNormalizer;
+import krzych.inmemorydata.InMemoryListDataSet;
+import krzych.inmemorydata.Point;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
