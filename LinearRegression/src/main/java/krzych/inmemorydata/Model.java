@@ -1,5 +1,6 @@
 package krzych.inmemorydata;
 
+import krzych.learningstrategy.LearningStrategy;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
@@ -15,13 +16,15 @@ public class Model {
     // and we want to know how to normalize input data
     private DatasetNormalizer normalizer;
 
+    private LearningStrategy strategy;
+
     public Model() {
         theta = new Point();
     }
 
     public Double apply(Point p) {
         normalizer.scaleXVector(p);
-        return applyScaled(p);
+        return strategy.val(applyScaled(p));
     }
 
     public Double applyScaledWith1(Point p) {
@@ -29,7 +32,8 @@ public class Model {
         for (int i = 0; i < theta.size(); ++i) {
             t+= theta.get(i) * p.get(i);
         }
-        return normalizer.invertScaleY(t);
+        t = strategy.g(t);
+        return strategy.val(normalizer.invertScaleY(t));
     }
 
     public void print() {
@@ -38,11 +42,7 @@ public class Model {
 
     private Double applyScaled(Point p) {
         p.add(0,1);
-        Double t = 0.0;
-        for (int i = 0; i < theta.size(); ++i) {
-            t+= theta.get(i) * p.get(i);
-        }
-        return normalizer.invertScaleY(t);
+        return applyScaledWith1(p);
     }
 
 

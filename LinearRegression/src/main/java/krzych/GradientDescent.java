@@ -2,6 +2,7 @@ package krzych;
 
 import krzych.inmemorydata.Model;
 import krzych.learningstrategy.LearningStrategy;
+import krzych.optimization.Optimization;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -13,19 +14,21 @@ public class GradientDescent {
 
     private static final Logger log = Logger.getLogger(GradientDescent.class);
     private final double costFunctionThreshold;
-    private final Double alpha;
+    private Double alpha;
     private final Double lambda;
     private final LearningStrategy learningStrategy;
+    private final Optimization optimization;
 
     private Model theta;
 
     private DataSet data;
 
-    public GradientDescent(Double alpha, Double lambda, Double gradientThreshold, LearningStrategy learningStrategy) {
+    public GradientDescent(Double alpha, Double lambda, Double gradientThreshold, LearningStrategy learningStrategy, Optimization optimization) {
         this.alpha = alpha;
         this.costFunctionThreshold = gradientThreshold;
         this.lambda = lambda;
         this.learningStrategy = learningStrategy;
+        this.optimization = optimization;
     }
 
     public Model solve(DataSet data) {
@@ -49,6 +52,7 @@ public class GradientDescent {
             if (previousCost < cost) {
                 log.warn("XXXXXXXXXXXXXXXXXXXXXXXX Iteration " + counter + " Previous cost is lower, gradient is ascending");
             }
+            alpha = optimization.optimizeAlpha(alpha, cost);
         } while (Math.abs(previousCost - cost) > costFunctionThreshold);
         return getModel();
     }
@@ -87,6 +91,7 @@ public class GradientDescent {
     }
 
     private Model getModel() {
+        theta.setStrategy(learningStrategy);
         return theta;
     }
 

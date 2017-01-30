@@ -20,10 +20,10 @@ public class DataSuite {
         this.normalizer = normalizer;
     }
 
-    public static DataSuite readFile(String file, int exponent) throws IOException {
+    public static DataSuite readFile(String file, int exponent, boolean normalizeY) throws IOException {
         DataSet trainingSet = DataSetFactory.readFile(file);
         trainingSet.polynomialExpand(exponent);
-        DatasetNormalizer normalizer = new DatasetNormalizer((InMemoryListDataSet)trainingSet);
+        DatasetNormalizer normalizer = new DatasetNormalizer((InMemoryListDataSet)trainingSet, normalizeY);
         normalizer.scalingFeatures();
         trainingSet.shuffle();
         trainingSet.addOnes();
@@ -31,7 +31,7 @@ public class DataSuite {
         return new DataSuite(trainingSet, controlSet, normalizer);
     }
 
-    public static DataSuite readFile(String file) throws IOException {
-        return readFile(file, 1);
+    public static DataSuite readFile(String file, boolean normalizeY) throws IOException {
+        return readFile(file, 1, normalizeY);
     }
 }

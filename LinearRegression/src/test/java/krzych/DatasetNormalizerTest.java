@@ -43,7 +43,7 @@ public class DatasetNormalizerTest
     public void testIfNormalizedDatainRange01() throws IOException {
         InMemoryListDataSet squareData = DataSetFactory.readFile("src/test/resources/square.csv");
         squareData.print();
-        DatasetNormalizer normalizer = new DatasetNormalizer(squareData);
+        DatasetNormalizer normalizer = new DatasetNormalizer(squareData,true);
         normalizer.scalingFeatures();
         for ( Point p : squareData.getFeaturesX() ) {
             for (int i = 0;i < p.size(); ++i) {
@@ -56,7 +56,7 @@ public class DatasetNormalizerTest
 
     public void testScaleAndScaleBack() throws IOException {
         InMemoryListDataSet squareData = DataSetFactory.readFile("src/test/resources/square.csv");
-        DatasetNormalizer normalizer = new DatasetNormalizer(squareData);
+        DatasetNormalizer normalizer = new DatasetNormalizer(squareData, true);
 
 
         for ( Double v : Arrays.asList(0.1, 5.0, 10.0, -10. -20, 100000.0, 10000001.0) ){

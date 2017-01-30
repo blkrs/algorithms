@@ -5,6 +5,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import krzych.inmemorydata.Model;
 import krzych.inmemorydata.Point;
+import krzych.learningstrategy.LogisticClassificationStrategy;
+import krzych.optimization.SimpleOptimization;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -39,7 +41,7 @@ public class AppTest
 
     public void testGradientDescentIris() throws IOException {
         log.info("Iris dataset");
-        DataSuite data = DataSuite.readFile("src/test/resources/iris.csv");
+        DataSuite data = DataSuite.readFile("src/test/resources/iris.csv", true);
         GradientDescentBuilder builder = new GradientDescentBuilder();
         GradientDescent gd = builder.build();
         Model model = gd.solve(data.trainingSet);
@@ -73,7 +75,7 @@ public class AppTest
     public void testGradientDescentIrisRigorious() throws IOException {
         int exponent = 5;
         log.info("Iris dataset");
-        DataSuite data = DataSuite.readFile("src/test/resources/iris.csv", exponent);
+        DataSuite data = DataSuite.readFile("src/test/resources/iris.csv", exponent, true);
         GradientDescentBuilder builder = new GradientDescentBuilder();
 
         GradientDescent gd = builder.setAlpha(0.1)
@@ -101,7 +103,7 @@ public class AppTest
 
     public void testGradientDecentLinear() throws IOException {
         log.info("y = x dataset");
-        DataSuite data = DataSuite.readFile("src/test/resources/linearyeqx.csv");
+        DataSuite data = DataSuite.readFile("src/test/resources/linearyeqx.csv", true);
         GradientDescent gd = new GradientDescentBuilder().setThreshold(0.00000000001).build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
@@ -124,7 +126,7 @@ public class AppTest
     }
     public void testGradientDecentLinearYeqXMinus20() throws IOException {
         log.info("y = x dataset");
-        DataSuite data = DataSuite.readFile("src/test/resources/linearyeqxminus20.csv");
+        DataSuite data = DataSuite.readFile("src/test/resources/linearyeqxminus20.csv", true);
         GradientDescent gd = new GradientDescentBuilder().build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
@@ -149,7 +151,7 @@ public class AppTest
     public void testGradientDescentSquare() throws IOException {
         log.info("y = x^ 2 dataset");
         int exponent = 3;
-        DataSuite data = DataSuite.readFile("src/test/resources/square.csv", exponent);
+        DataSuite data = DataSuite.readFile("src/test/resources/square.csv", exponent, true);
         GradientDescent gd = new GradientDescentBuilder().build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
@@ -173,7 +175,7 @@ public class AppTest
     public void testGradientDescentSquareNegative() throws IOException {
         log.info("y = - x^2 dataset");
         int exponent = 2;
-        DataSuite data = DataSuite.readFile("src/test/resources/squarenegative.csv", exponent);
+        DataSuite data = DataSuite.readFile("src/test/resources/squarenegative.csv", exponent, true);
 
         GradientDescent gd = new GradientDescentBuilder().setAlpha(0.3).setThreshold(0.0000000000001).setLambda(0.001).build();
         Model model = gd.solve(data.trainingSet);
@@ -199,13 +201,14 @@ public class AppTest
 
     public void testGradientDescentClass() throws IOException {
         log.info("y = 1 for x >= 4");
-        int exponent = 1;
-        DataSuite data = DataSuite.readFile("src/test/resources/simpleclass.csv", exponent);
+        int exponent = 3;
+        DataSuite data = DataSuite.readFile("src/test/resources/simpleclass.csv", exponent, false);
 
         GradientDescent gd = new GradientDescentBuilder()
-                                    .setAlpha(0.3)
-                                    .setThreshold(0.0000000000001)
-                                    .setLambda(20.0)
+                                    .setAlpha(0.1)
+                                    .setThreshold(0.000000000000001)
+                                    .setLambda(0.0)
+                                    .setLearningStrategy(new LogisticClassificationStrategy())
                             .build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
@@ -219,7 +222,7 @@ public class AppTest
         log.info("Error TS = " + errorTS);
      //   assertTrue(errorCS < 0.4);
      //   assertTrue(errorTS < 0.4);
-        for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
+        for (Double d : Arrays.asList(-100.0,0.0, 1.0, -3.0, 3.0, 10.0)) {
             Point p = new Point();
             p.add(d);
             p.expand(exponent);
@@ -230,13 +233,15 @@ public class AppTest
 
     public void testGradientDescentCircle() throws IOException {
         log.info("circle");
-        int exponent = 1;
-        DataSuite data = DataSuite.readFile("src/test/resources/circle.csv", exponent);
+        int exponent = 2;
+        DataSuite data = DataSuite.readFile("src/test/resources/circle.csv", exponent, false);
 
         GradientDescent gd = new GradientDescentBuilder()
-                .setAlpha(0.3)
-                .setThreshold(0.0000000000001)
-                .setLambda(20.0)
+                .setAlpha(0.9)
+                .setThreshold(0.0000000001)
+                .setLambda(0.0)
+                .setLearningStrategy(new LogisticClassificationStrategy())
+                .setOptimization(new SimpleOptimization())
                 .build();
         Model model = gd.solve(data.trainingSet);
         model.setNormalizer(data.normalizer);
@@ -250,12 +255,18 @@ public class AppTest
         log.info("Error TS = " + errorTS);
         //   assertTrue(errorCS < 0.4);
         //   assertTrue(errorTS < 0.4);
-        for (Double d : Arrays.asList(-100.0, -3.0, 3.0, 10.0)) {
+        for (Double d : Arrays.asList(-100.0, -2.0, 2.0, 10.0)) {
             Point p = new Point();
             p.add(d);
             p.add(d);
             p.expand(exponent);
-            log.info("Scoring: " + d + ", result: " + model.apply(p));
+            Double result = model.apply(p);
+            if (d*d <= 4) {
+                assertEquals(1.0, result);
+            } else {
+                assertEquals(0.0, result);
+            }
+            log.info("Scoring: " + d + ", result: " + result);
         }
         model.print();
     }

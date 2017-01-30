@@ -13,10 +13,12 @@ public class DatasetNormalizer {
     private double maxY;
     private int width;
     private int height;
+    private boolean normalizeY = true;
 
     private InMemoryListDataSet data;
 
-    public DatasetNormalizer(InMemoryListDataSet dataset) {
+    public DatasetNormalizer(InMemoryListDataSet dataset, boolean normalizeY) {
+        this.normalizeY = normalizeY;
         data = dataset;
         width = data.getFeaturesX().get(0).size();
         height = data.getFeaturesX().size();
@@ -26,22 +28,26 @@ public class DatasetNormalizer {
     public void scalingFeatures() {
         for (int row = 0; row < height; ++row) {
             scaleXRow(row);
-            data.getDependedVarsY().set(row,
-                    scaleY(
-                            data.getDependedVarsY().get(row)
-                    )
-            );
+            if (this.normalizeY) {
+                data.getDependedVarsY().set(row,
+                        scaleY(
+                                data.getDependedVarsY().get(row)
+                        )
+                );
+            }
         }
     }
 
     public void descaleFeatures() {
         for (int row = 0; row < height; ++row) {
             revertScaleXRow(row);
-            data.getDependedVarsY().set(row,
-                    invertScaleY(
-                            data.getDependedVarsY().get(row)
-                    )
-            );
+            if (this.normalizeY) {
+                data.getDependedVarsY().set(row,
+                        invertScaleY(
+                                data.getDependedVarsY().get(row)
+                        )
+                );
+            }
         }
     }
 
@@ -99,7 +105,10 @@ public class DatasetNormalizer {
     }
 
     public double invertScaleY(Double y) {
-        return (y * (maxY - minY)) + minY;
+        if (normalizeY) {
+            return (y * (maxY - minY)) + minY;
+        }
+        return y;
     }
 
     public double scaleY(Double y) {
